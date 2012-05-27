@@ -14,4 +14,9 @@ Gem::Specification.new do |gem|
   gem.name          = "readme_tester"
   gem.require_paths = ["lib"]
   gem.version       = ReadmeTester::VERSION
+
+  gem.add_development_dependency 'deject',    '~> 0.2.2'
+  gem.add_development_dependency 'surrogate', '~> 0.4.2'
+  gem.add_development_dependency 'rspec',     '~> 2.10.0'
+  gem.add_development_dependency 'cucumber',  '~> 1.2.0'
 end
