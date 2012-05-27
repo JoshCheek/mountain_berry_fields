@@ -1,3 +1,4 @@
+require 'simplecov'
 require 'fileutils'
 
 module ProvingGrounds
@@ -22,5 +23,6 @@ module ProvingGrounds
 end
 
 ENV['PATH'] = "#{File.expand_path "../../../bin", __FILE__}:#{ENV['PATH']}"
+ENV['YO_IM_TESTING_README_SHIT_RIGHT_NOW'] = 'FOR_REALSIES'
 World ProvingGrounds
 After { remove_proving_grounds }

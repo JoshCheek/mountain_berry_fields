@@ -1,3 +1,4 @@
+require 'simplecov'
 require 'readme_tester'
 require 'stringio'
 require 'surrogate/rspec'
