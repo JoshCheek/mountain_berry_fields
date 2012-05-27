@@ -10,8 +10,6 @@ module ProvingGrounds
   def in_proving_grounds(&block)
     make_proving_grounds
     cd proving_grounds_dir, &block
-  ensure
-    remove_proving_grounds
   end
 
   def make_proving_grounds
@@ -25,3 +23,4 @@ end
 
 ENV['PATH'] = "#{File.expand_path "../../../bin", __FILE__}:#{ENV['PATH']}"
 World ProvingGrounds
+After { remove_proving_grounds }

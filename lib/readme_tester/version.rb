@@ -1,3 +1,3 @@
-module ReadmeTester
+class ReadmeTester
   VERSION = "0.0.1"
 end

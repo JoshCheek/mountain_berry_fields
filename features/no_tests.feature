@@ -1,6 +1,6 @@
 Feature: No Tests
   Scenario: Does nothing for a file with no tests
-    Given the file "Readme.md.testable"
+    Given the file "Readme.md.testable_readme"
     """
     # Whatever
 
@@ -8,7 +8,7 @@ Feature: No Tests
 
       some code
     """
-    When I run "readme_tester Readme.md.testable"
+    When I run "readme_tester Readme.md.testable_readme"
     Then I see "Readme.md"
     """
     # Whatever
