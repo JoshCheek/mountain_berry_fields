@@ -36,7 +36,7 @@ private
 
   def nonexistent_file
     return if file_class.exist? filename
-    stderr.write "#{filename.inspect} does not exist"
+    stderr.write "#{File.expand_path(filename).inspect} does not exist."
     1
   end
 

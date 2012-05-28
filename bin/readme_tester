@@ -4,10 +4,12 @@
 if ENV['YO_IM_TESTING_README_SHIT_RIGHT_NOW'] == 'FOR_REALSIES'
   Dir.chdir File.dirname File.dirname __FILE__ do
     require 'simplecov'
+    SimpleCov.command_name "Full Stack (executed from binary)"
   end
 end
 
 $LOAD_PATH.unshift File.expand_path('../../lib/', __FILE__)
+
 require 'readme_tester'
 
 exit ReadmeTester ARGV

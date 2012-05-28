@@ -3,9 +3,18 @@ Given 'the file "$filename"' do |filename, body|
 end
 
 When 'I run "$command"' do |command|
-  in_proving_grounds { system command }
+  in_proving_grounds { cmdline command }
 end
 
-Then 'I see "$filename"' do |filename, body|
+Then /^it exits with a status of (\d+)$/ do |status|
+  last_cmdline.exitstatus.should == status.to_i
+end
+
+Then /^it exits with a status of (\d+), and a stderr of$/ do |status, stderr|
+  last_cmdline.exitstatus.should == status.to_i
+  last_cmdline.stderr.should == interpret_curlies(stderr)
+end
+
+Then 'I see the file "$filename"' do |filename, body|
   in_proving_grounds { File.read(filename).should == body }
 end
