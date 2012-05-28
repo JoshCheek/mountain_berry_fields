@@ -19,8 +19,17 @@ module Mock
     Surrogate.endow self
     define(:declare_failure) { }
   end
+
+  class Interpreter
+    Surrogate.endow self
+    define(:initialize)  {}
+    define(:tests_pass?) { true }
+    define(:result)      { 'some result' }
+  end
 end
-ReadmeTester.override(:interaction) { Mock::Interaction.new }
-ReadmeTester.override(:file_class)  { Mock::File.clone }
+
+ReadmeTester.override(:file_class)        { Mock::File.clone }
+ReadmeTester.override(:interaction)       { Mock::Interaction.new }
+ReadmeTester.override(:interpreter_class) { Mock::Interpreter.clone }
 
 ReadmeTester::CommandLineInteraction.override(:stderr) { StringIO.new }

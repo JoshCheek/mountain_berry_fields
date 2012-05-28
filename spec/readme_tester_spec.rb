@@ -4,6 +4,7 @@ describe ReadmeTester do
   let(:file_class)  { readme_tester.file_class }
   let(:stderr)      { readme_tester.stderr.string }
   let(:interaction) { readme_tester.interaction }
+  let(:interpreter) { readme_tester.interpreter }
 
   shared_examples 'a failure' do
     it 'returns exit status 1' do
@@ -59,10 +60,11 @@ describe ReadmeTester do
 
 
   context 'when given the name of a file that exists' do
-    let(:input_filename)  { 'some_valid_file.md.testable_readme' }
-    let(:output_filename) { 'some_valid_file.md' }
-    let(:readme_tester)   { described_class.new [input_filename] }
-    let(:file_body)       { "SOME FILE BODY" }
+    let(:input_filename)   { 'some_valid_file.md.testable_readme' }
+    let(:output_filename)  { 'some_valid_file.md' }
+    let(:readme_tester)    { described_class.new [input_filename] }
+    let(:file_body)        { 'SOME FILE BODY' }
+    let(:interpreted_body) { 'INTERPRETED BODY' }
 
     before { file_class.will_read file_body }
 
@@ -71,30 +73,31 @@ describe ReadmeTester do
       interaction.should_not have_been_told_to :declare_failure
     end
 
-    it 'reads the input file' do
+    it 'passes the file contents to the interpreter' do
+      file_class.will_read "file body"
       readme_tester.execute
       file_class.should have_been_told_to(:read).with(input_filename)
+      interpreter.should have_been_initialized_with "file body"
     end
 
-    # it 'passes the file contents to the interpreter'
 
-    # it 'tests the interpretation'
+    context 'when the tests pass' do
+      before { interpreter.will_tests_pass? true }
+      before { interpreter.will_have_result interpreted_body }
 
-    # context 'when the tests pass' do
       it 'returns exit status 0' do
         readme_tester.execute.should == 0
       end
 
-      # eventually it will write the extracted file to the new filename
-      it 'writes the same file to the new filename (the same name, but with .testable_readme removed)' do
+      it 'writes the interpreted file to the new filename (the same name, but with .testable_readme removed)' do
         readme_tester.execute
-        file_class.should have_been_told_to(:write).with(output_filename, file_body)
+        file_class.should have_been_told_to(:write).with(output_filename, interpreted_body)
       end
-    # end
+    end
 
-    # context 'when the tests fail' do
-    #   it_behaves_like 'a failure'
-    #   it 'writes "tests do not pass" to stderr'
-    # end
+    context 'when the tests fail' do
+      before { interpreter.will_tests_pass? false }
+      it_behaves_like 'a failure'
+    end
   end
 end

@@ -1,5 +1,6 @@
 require 'deject'
 require 'readme_tester/version'
+require 'readme_tester/interpreter'
 
 def ReadmeTester(argv)
   ReadmeTester.new(argv).execute
@@ -7,7 +8,8 @@ end
 
 class ReadmeTester
   Deject self, :interaction
-  dependency(:file_class) { File }
+  dependency(:interpreter_class) { Interpreter }
+  dependency(:file_class)        { File }
 
   def initialize(argv)
     self.argv = argv
@@ -15,6 +17,10 @@ class ReadmeTester
 
   def execute
     missing_input_file || invalid_filename || nonexistent_file || execute!
+  end
+
+  def interpreter
+    @interpreter ||= interpreter_class.new file_body
   end
 
 private
@@ -38,13 +44,17 @@ private
   end
 
   def execute!
-    body = file_class.read filename
-    file_class.write output_filename_for(filename), body
+    return 1 unless interpreter.tests_pass?
+    file_class.write output_filename_for(filename), interpreter.result
     0
   end
 
   def filename
     argv.first
+  end
+
+  def file_body
+    file_class.read filename
   end
 
   def output_filename_for(filename)
