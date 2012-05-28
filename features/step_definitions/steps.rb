@@ -12,7 +12,7 @@ end
 
 Then /^it exits with a status of (\d+), and a stderr of$/ do |status, stderr|
   last_cmdline.exitstatus.should == status.to_i
-  last_cmdline.stderr.should == interpret_curlies(stderr)
+  last_cmdline.stderr.chomp.should == interpret_curlies(stderr).chomp
 end
 
 Then 'I see the file "$filename"' do |filename, body|

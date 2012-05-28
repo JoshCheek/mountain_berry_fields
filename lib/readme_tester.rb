@@ -6,11 +6,8 @@ def ReadmeTester(argv)
 end
 
 class ReadmeTester
-  Deject self
-  dependency(:stdin)      { $stdin  }
-  dependency(:stdout)     { $stdout }
-  dependency(:stderr)     { $stderr }
-  dependency(:file_class) { File    }
+  Deject self, :interaction
+  dependency(:file_class) { File }
 
   def initialize(argv)
     self.argv = argv
@@ -24,19 +21,19 @@ private
 
   def missing_input_file
     return if filename
-    stderr.write 'Please provide an input file'
+    interaction.declare_failure 'Please provide an input file'
     1
   end
 
   def invalid_filename
     return if filename =~ suffix_regex
-    stderr.write "#{filename.inspect} does not end in .testable_readme"
+    interaction.declare_failure "#{filename.inspect} does not end in .testable_readme"
     1
   end
 
   def nonexistent_file
     return if file_class.exist? filename
-    stderr.write "#{File.expand_path(filename).inspect} does not exist."
+    interaction.declare_failure "#{File.expand_path(filename).inspect} does not exist."
     1
   end
 

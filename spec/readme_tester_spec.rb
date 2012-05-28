@@ -1,8 +1,9 @@
 require 'spec_helper'
 
 describe ReadmeTester do
-  let(:file_class) { readme_tester.file_class }
-  let(:stderr)     { readme_tester.stderr.string }
+  let(:file_class)  { readme_tester.file_class }
+  let(:stderr)      { readme_tester.stderr.string }
+  let(:interaction) { readme_tester.interaction }
 
   shared_examples 'a failure' do
     it 'returns exit status 1' do
@@ -21,26 +22,26 @@ describe ReadmeTester do
 
     it_behaves_like 'a failure'
 
-    it "writes '#{nonexistence_message}' to stderr" do
+    it "declares the error '#{nonexistence_message}'" do
       readme_tester.execute
-      stderr.should include nonexistence_message
+      interaction.should have_been_told_to(:declare_failure).with(nonexistence_message)
     end
   end
 
 
   context 'when the input file does not exist' do
     nonexistent_filename = '/some/bullshit/file.md.testable_readme'.freeze
-    nonexistence_message = "#{nonexistent_filename.inspect} does not exist".freeze
+    nonexistence_message = "#{nonexistent_filename.inspect} does not exist.".freeze
 
     let(:readme_tester) { described_class.new [nonexistent_filename] }
     before { file_class.will_exist? false }
 
     it_behaves_like 'a failure'
 
-    it "writes '#{nonexistent_filename}' to stderr" do
+    it "declares the error '#{nonexistent_filename}'" do
       readme_tester.execute
       file_class.should have_been_asked_for_its(:exist?).with(nonexistent_filename)
-      stderr.should include nonexistence_message
+      interaction.should have_been_told_to(:declare_failure).with(nonexistence_message)
     end
   end
 
@@ -50,9 +51,9 @@ describe ReadmeTester do
     invalid_filename_message = "#{invalid_filename.inspect} does not end in .testable_readme"
     let(:readme_tester) { described_class.new [invalid_filename] }
 
-    it "writes '#{invalid_filename_message}' to stderr" do
+    it "declares the error '#{invalid_filename_message}'" do
       readme_tester.execute
-      stderr.should include invalid_filename_message
+      interaction.should have_been_told_to(:declare_failure).with(invalid_filename_message)
     end
   end
 
@@ -65,9 +66,9 @@ describe ReadmeTester do
 
     before { file_class.will_read file_body }
 
-    it 'writes nothing to stderr' do
+    it 'declares no errors' do
       readme_tester.execute
-      stderr.should be_empty
+      interaction.should_not have_been_told_to :declare_failure
     end
 
     it 'reads the input file' do

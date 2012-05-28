@@ -1,5 +1,8 @@
 require 'simplecov'
+
 require 'readme_tester'
+require 'readme_tester/command_line_interaction'
+
 require 'stringio'
 require 'surrogate/rspec'
 
@@ -11,9 +14,13 @@ module Mock
       define(:read)   { "file contents" }
     end
   end
-end
 
-ReadmeTester.override(:stdin)      { StringIO.new }
-ReadmeTester.override(:stdout)     { StringIO.new }
-ReadmeTester.override(:stderr)     { StringIO.new }
-ReadmeTester.override(:file_class) { Mock::File.clone }
+  class Interaction
+    Surrogate.endow self
+    define(:declare_failure) { }
+  end
+end
+ReadmeTester.override(:interaction) { Mock::Interaction.new }
+ReadmeTester.override(:file_class)  { Mock::File.clone }
+
+ReadmeTester::CommandLineInteraction.override(:stderr) { StringIO.new }

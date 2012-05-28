@@ -11,5 +11,7 @@ end
 $LOAD_PATH.unshift File.expand_path('../../lib/', __FILE__)
 
 require 'readme_tester'
+require 'readme_tester/command_line_interaction'
+ReadmeTester.override(:interaction) { ReadmeTester::CommandLineInteraction.new }
 
 exit ReadmeTester ARGV
