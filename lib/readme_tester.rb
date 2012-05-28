@@ -11,6 +11,9 @@ class ReadmeTester
   dependency(:interpreter_class) { Interpreter }
   dependency(:file_class)        { File }
 
+  SUCCESS_STATUS = 0
+  FAILURE_STATUS = 1
+
   def initialize(argv)
     self.argv = argv
   end
@@ -28,25 +31,25 @@ private
   def missing_input_file
     return if filename
     interaction.declare_failure 'Please provide an input file'
-    1
+    FAILURE_STATUS
   end
 
   def invalid_filename
     return if filename =~ suffix_regex
     interaction.declare_failure "#{filename.inspect} does not end in .testable_readme"
-    1
+    FAILURE_STATUS
   end
 
   def nonexistent_file
     return if file_class.exist? filename
     interaction.declare_failure "#{File.expand_path(filename).inspect} does not exist."
-    1
+    FAILURE_STATUS
   end
 
   def execute!
-    return 1 unless interpreter.tests_pass?
+    return FAILURE_STATUS unless interpreter.tests_pass?
     file_class.write output_filename_for(filename), interpreter.result
-    0
+    SUCCESS_STATUS
   end
 
   def filename
