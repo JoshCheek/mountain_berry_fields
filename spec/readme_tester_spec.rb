@@ -1,11 +1,5 @@
 require 'spec_helper'
 
-describe ReadmeTester::FileClass do
-  it 'is substitutable for the mock file class' do
-    Mock::FileClass.should substitute_for described_class
-  end
-end
-
 describe ReadmeTester do
   let(:file_class) { readme_tester.file_class }
   let(:stderr)     { readme_tester.stderr.string }
@@ -16,7 +10,7 @@ describe ReadmeTester do
     end
 
     it 'does not write any files' do
-      file_class.should_not have_been_told_to :write_file
+      file_class.should_not have_been_told_to :write
     end
   end
 
@@ -69,7 +63,7 @@ describe ReadmeTester do
     let(:readme_tester)   { described_class.new [input_filename] }
     let(:file_body)       { "SOME FILE BODY" }
 
-    before { file_class.will_read_file file_body }
+    before { file_class.will_read file_body }
 
     it 'writes nothing to stderr' do
       readme_tester.execute
@@ -78,7 +72,7 @@ describe ReadmeTester do
 
     it 'reads the input file' do
       readme_tester.execute
-      file_class.should have_been_told_to(:read_file).with(input_filename)
+      file_class.should have_been_told_to(:read).with(input_filename)
     end
 
     # it 'passes the file contents to the interpreter'
@@ -93,7 +87,7 @@ describe ReadmeTester do
       # eventually it will write the extracted file to the new filename
       it 'writes the same file to the new filename (the same name, but with .testable_readme removed)' do
         readme_tester.execute
-        file_class.should have_been_told_to(:write_file).with(output_filename, file_body)
+        file_class.should have_been_told_to(:write).with(output_filename, file_body)
       end
     # end
 

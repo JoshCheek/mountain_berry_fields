@@ -1,6 +1,5 @@
 require 'deject'
 require 'readme_tester/version'
-require 'readme_tester/file_class'
 
 def ReadmeTester(argv)
   ReadmeTester.new(argv).execute
@@ -38,8 +37,8 @@ private
   end
 
   def execute!
-    body = file_class.read_file filename
-    file_class.write_file output_filename_for(filename), body
+    body = file_class.read filename
+    file_class.write output_filename_for(filename), body
     0
   end
 
