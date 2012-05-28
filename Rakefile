@@ -8,5 +8,8 @@ task default: :rspec
 
 
 require 'cucumber/rake/task'
-Cucumber::Rake::Task.new :cucumber
+default_cucumber_opts = "features --format pretty --tags ~@not-implemented"
+Cucumber::Rake::Task.new(:cucumber)      { |t| t.cucumber_opts = default_cucumber_opts + " --tags ~@wip" }
+Cucumber::Rake::Task.new('cucumber:wip') { |t| t.cucumber_opts = default_cucumber_opts + " --tags @wip" }
+
 task default: :cucumber
