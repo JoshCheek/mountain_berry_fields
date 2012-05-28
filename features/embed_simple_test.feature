@@ -1,44 +1,39 @@
-@not-implemented
-Feature: Integrate with xmpfilter
+@wip
+Feature: Simple test
 
-  Scenario: Passing xmpfilter
+  Scenario: Error when the test passes
     Given the file "Readme.md.testable_readme"
     """
     # Whatever
 
-        <% test 'basic addition', strategy: :xmpfilter %>
-        1 + 1 # => 2
+        <% test 'I will pass', strategy: :always_pass %>
+        some code
         <% end %>
-
-    More shit here
     """
     When I run "readme_tester Readme.md.testable_readme"
     Then it exits with a status of 0
-    Then I see the file "Readme.md"
+    And I see the file "Readme.md"
     """
     # Whatever
 
-        1 + 1 # => 2
+    Some text
 
-    More shit here
+      some code
     """
 
-  Scenario: Failing xmpfilter
+  Scenario: Fail when the test fail
     Given the file "Readme.md.testable_readme"
     """
     # Whatever
 
-        <% test 'basic addition', strategy: :xmpfilter %>
-        1 + 2 # => 2
+        <% test 'I will fail', strategy: :always_fail %>
+        some code
         <% end %>
-
-    More shit here
     """
     When I run "readme_tester Readme.md.testable_readme"
     Then it exits with a status of 1, and a stderr of
     """
-    Failure:  basic addition, line 1
-    Expected: 1 + 2 # => 2
-    Actual:   1 + 2 # => 3
+    Failure:  I will fail
+    This test will always fail.
     """
     And I do not see the file "Readme.md"
