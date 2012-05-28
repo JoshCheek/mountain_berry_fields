@@ -6,7 +6,11 @@ def ReadmeTester(argv)
 end
 
 class ReadmeTester
-  Deject self, :stdin, :stdout, :stderr, :file_class
+  Deject self
+  dependency(:stdin)      { $stdin  }
+  dependency(:stdout)     { $stdout }
+  dependency(:stderr)     { $stderr }
+  dependency(:file_class) { File    }
 
   def initialize(argv)
     self.argv = argv

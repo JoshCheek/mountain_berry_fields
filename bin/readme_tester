@@ -10,9 +10,4 @@ end
 $LOAD_PATH.unshift File.expand_path('../../lib/', __FILE__)
 require 'readme_tester'
 
-Deject.register(:stdin)      { $stdin }
-Deject.register(:stdout)     { $stdout }
-Deject.register(:stderr)     { $stderr }
-Deject.register(:file_class) { ReadmeTester::File }
-
 exit ReadmeTester ARGV

@@ -13,7 +13,7 @@ module Mock
   end
 end
 
-Deject.register(:stdin)      { StringIO.new }
-Deject.register(:stdout)     { StringIO.new }
-Deject.register(:stderr)     { StringIO.new }
-Deject.register(:file_class) { Mock::File.clone }
+ReadmeTester.override(:stdin)      { StringIO.new }
+ReadmeTester.override(:stdout)     { StringIO.new }
+ReadmeTester.override(:stderr)     { StringIO.new }
+ReadmeTester.override(:file_class) { Mock::File.clone }
