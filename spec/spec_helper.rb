@@ -22,10 +22,11 @@ module Mock
 
   class Evaluator
     Surrogate.endow self
-    define(:initialize)     {}
-    define(:tests_pass?)    { true }
-    define(:known_commands) { ['test'] }
-    define(:add_test)       { |test| [test] }
+    define(:initialize)      {}
+    define(:tests_pass?)     { true }
+    define(:known_commands)  { ['test'] }
+    define(:add_test)        { |test| [test] }
+    define(:failure_message) { 'some failure message' }
 
     def inspect
       '#<MOCK EVALUATOR>'
@@ -37,6 +38,7 @@ module Mock
     define(:initialize) {}
     define(:parse) { 'some body' }
     define(:parsed) { parse }
+
     def inspect
       '#<MOCK PARSER>'
     end

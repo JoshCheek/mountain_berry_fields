@@ -1,3 +1,5 @@
+require 'erubis'
+
 class ReadmeTester
   YoDawgThisIsntReallyERB = Class.new StandardError
   UnbalancedCommands      = Class.new StandardError

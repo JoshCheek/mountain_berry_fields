@@ -115,6 +115,11 @@ describe ReadmeTester do
     context 'when the tests fail' do
       before { evaluator.will_tests_pass? false }
       it_behaves_like 'a failure'
+      it "declares the failure with the evaluator's failure message" do
+        evaluator.will_have_failure_message "faiiil"
+        readme_tester.execute
+        interaction.should have_been_told_to(:declare_failure).with("faiiil")
+      end
     end
   end
 end

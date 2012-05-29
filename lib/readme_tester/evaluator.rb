@@ -1,11 +1,15 @@
-require 'erubis'
 require 'readme_tester/commands'
-require 'readme_tester/parser'
 
 class ReadmeTester
   class Evaluator
     def tests_pass?
-      true
+      strategies = tests.map { |test| Commands::Test::Strategy.for(test.strategy).new(test.code) }
+      @failing_test = strategies.find { |s| !s.pass? }
+      !@failing_test
+    end
+
+    def failure_message
+      @failing_test.failure_message
     end
 
     def tests

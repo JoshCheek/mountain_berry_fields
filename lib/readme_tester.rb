@@ -1,6 +1,8 @@
 require 'deject'
+
 require 'readme_tester/version'
 require 'readme_tester/evaluator'
+require 'readme_tester/parser'
 
 def ReadmeTester(argv)
   ReadmeTester.new(argv).execute
@@ -54,9 +56,13 @@ private
   def execute!
     begin
       parser.parse
-      return FAILURE_STATUS unless evaluator.tests_pass?
-      file_class.write output_filename_for(filename), parser.parsed
-      SUCCESS_STATUS
+      if evaluator.tests_pass?
+        file_class.write output_filename_for(filename), parser.parsed
+        SUCCESS_STATUS
+      else
+        interaction.declare_failure evaluator.failure_message
+        FAILURE_STATUS
+      end
     rescue StandardError
       interaction.declare_failure "#{$!.class} #{$!.message}"
       FAILURE_STATUS
