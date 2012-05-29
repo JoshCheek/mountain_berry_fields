@@ -22,14 +22,30 @@ module Mock
 
   class Evaluator
     Surrogate.endow self
-    define(:initialize)  {}
-    define(:tests_pass?) { true }
-    define(:result)      { 'some result' }
+    define(:initialize)     {}
+    define(:tests_pass?)    { true }
+    define(:known_commands) { ['test'] }
+    define(:add_test)       { |test| [test] }
+
+    def inspect
+      '#<MOCK EVALUATOR>'
+    end
+  end
+
+  class Parser
+    Surrogate.endow self
+    define(:initialize) {}
+    define(:parse) { 'some body' }
+    define(:parsed) { parse }
+    def inspect
+      '#<MOCK PARSER>'
+    end
   end
 end
 
 ReadmeTester.override(:file_class)      { Mock::File.clone }
 ReadmeTester.override(:interaction)     { Mock::Interaction.new }
 ReadmeTester.override(:evaluator_class) { Mock::Evaluator.clone }
+ReadmeTester.override(:parser_class)    { Mock::Parser.clone }
 
 ReadmeTester::CommandLineInteraction.override(:stderr) { StringIO.new }

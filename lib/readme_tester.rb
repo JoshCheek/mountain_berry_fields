@@ -9,6 +9,7 @@ end
 class ReadmeTester
   Deject self, :interaction
   dependency(:evaluator_class) { Evaluator }
+  dependency(:parser_class)    { Parser }
   dependency(:file_class)      { File }
 
   SUCCESS_STATUS = 0
@@ -23,7 +24,11 @@ class ReadmeTester
   end
 
   def evaluator
-    @evaluator ||= evaluator_class.new file_body
+    @evaluator ||= evaluator_class.new
+  end
+
+  def parser
+    @parser ||= parser_class.new file_class.read(filename), evaluator
   end
 
 private
@@ -47,17 +52,19 @@ private
   end
 
   def execute!
-    return FAILURE_STATUS unless evaluator.tests_pass?
-    file_class.write output_filename_for(filename), evaluator.result
-    SUCCESS_STATUS
+    begin
+      parser.parse
+      return FAILURE_STATUS unless evaluator.tests_pass?
+      file_class.write output_filename_for(filename), parser.parsed
+      SUCCESS_STATUS
+    rescue StandardError
+      interaction.declare_failure "#{$!.class} #{$!.message}"
+      FAILURE_STATUS
+    end
   end
 
   def filename
     argv.first
-  end
-
-  def file_body
-    file_class.read filename
   end
 
   def output_filename_for(filename)

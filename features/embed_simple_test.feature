@@ -16,9 +16,7 @@ Feature: Simple test
     """
     # Whatever
 
-    Some text
-
-      some code
+        some code
     """
 
   Scenario: Fail when the test fail

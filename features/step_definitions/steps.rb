@@ -7,7 +7,7 @@ When 'I run "$command"' do |command|
 end
 
 Then /^it exits with a status of (\d+)$/ do |status|
-  last_cmdline.exitstatus.should == status.to_i
+  last_cmdline.exitstatus.should eq(status.to_i), "Expected #{status}, got #{last_cmdline.exitstatus}. STDERR: #{last_cmdline.stderr}"
 end
 
 Then /^it exits with a status of (\d+), and a stderr of$/ do |status, stderr|

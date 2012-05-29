@@ -1,4 +1,7 @@
 class ReadmeTester
+  YoDawgThisIsntReallyERB = Class.new StandardError
+  UnbalancedCommands      = Class.new StandardError
+
   class Parser
     attr_accessor :original_source, :evaluator
 
@@ -16,7 +19,11 @@ class ReadmeTester
     end
 
     def parse
-      @interpreted ||= convert original_source
+      @parsed ||= convert original_source
+    end
+
+    def parsed
+      @parsed
     end
 
     # temp method I'm using to track how Erubis hands me things
@@ -61,7 +68,7 @@ class ReadmeTester
     end
 
     def remove_last_line(src)
-      src.sub! /^\s+\z/, ''
+      src.sub! /^.*?\z/, ''
     end
 
     def last_line_empty?(src)

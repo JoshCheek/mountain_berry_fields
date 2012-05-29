@@ -5,6 +5,7 @@ describe ReadmeTester do
   let(:stderr)      { readme_tester.stderr.string }
   let(:interaction) { readme_tester.interaction }
   let(:evaluator)   { readme_tester.evaluator }
+  let(:parser)      { readme_tester.parser }
 
   shared_examples 'a failure' do
     it 'returns exit status 1' do
@@ -58,8 +59,20 @@ describe ReadmeTester do
     end
   end
 
+  context 'when unsuccessfully parsing a file' do
+    let(:input_filename)   { 'some_invalid_file.md.testable_readme' }
+    let(:readme_tester)    { described_class.new [input_filename] }
+    before { parser.will_parse ReadmeTester::UnbalancedCommands.new "some error message" }
 
-  context 'when given the name of a file that exists' do
+    it_behaves_like 'a failure'
+
+    it 'writes the exception class and message as the error' do
+      readme_tester.execute
+      interaction.should have_been_told_to(:declare_failure).with("ReadmeTester::UnbalancedCommands some error message")
+    end
+  end
+
+  context 'when successfully parsing a file' do
     let(:input_filename)   { 'some_valid_file.md.testable_readme' }
     let(:output_filename)  { 'some_valid_file.md' }
     let(:readme_tester)    { described_class.new [input_filename] }
@@ -67,23 +80,27 @@ describe ReadmeTester do
     let(:interpreted_body) { 'INTERPRETED BODY' }
 
     before { file_class.will_read file_body }
+    before { parser.will_parse interpreted_body }
 
     it 'declares no errors' do
       readme_tester.execute
       interaction.should_not have_been_told_to :declare_failure
     end
 
-    it 'passes the file contents to the evaluator' do
-      file_class.will_read "file body"
+    it 'passes the file contents to the parser' do
       readme_tester.execute
       file_class.should have_been_told_to(:read).with(input_filename)
-      evaluator.should have_been_initialized_with "file body"
+      parser.should have_been_initialized_with file_body, evaluator
+    end
+
+    it 'evaluates the results of the parsing' do
+      readme_tester.execute
+      evaluator.should have_been_initialized_with no_args
     end
 
 
     context 'when the tests pass' do
       before { evaluator.will_tests_pass? true }
-      before { evaluator.will_have_result interpreted_body }
 
       it 'returns exit status 0' do
         readme_tester.execute.should == 0
