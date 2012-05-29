@@ -4,7 +4,7 @@ describe ReadmeTester do
   let(:file_class)  { readme_tester.file_class }
   let(:stderr)      { readme_tester.stderr.string }
   let(:interaction) { readme_tester.interaction }
-  let(:interpreter) { readme_tester.interpreter }
+  let(:evaluator)   { readme_tester.evaluator }
 
   shared_examples 'a failure' do
     it 'returns exit status 1' do
@@ -73,17 +73,17 @@ describe ReadmeTester do
       interaction.should_not have_been_told_to :declare_failure
     end
 
-    it 'passes the file contents to the interpreter' do
+    it 'passes the file contents to the evaluator' do
       file_class.will_read "file body"
       readme_tester.execute
       file_class.should have_been_told_to(:read).with(input_filename)
-      interpreter.should have_been_initialized_with "file body"
+      evaluator.should have_been_initialized_with "file body"
     end
 
 
     context 'when the tests pass' do
-      before { interpreter.will_tests_pass? true }
-      before { interpreter.will_have_result interpreted_body }
+      before { evaluator.will_tests_pass? true }
+      before { evaluator.will_have_result interpreted_body }
 
       it 'returns exit status 0' do
         readme_tester.execute.should == 0
@@ -96,7 +96,7 @@ describe ReadmeTester do
     end
 
     context 'when the tests fail' do
-      before { interpreter.will_tests_pass? false }
+      before { evaluator.will_tests_pass? false }
       it_behaves_like 'a failure'
     end
   end

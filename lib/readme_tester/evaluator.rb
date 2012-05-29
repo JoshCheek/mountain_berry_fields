@@ -1,5 +1,5 @@
 class ReadmeTester
-  class Interpreter
+  class Evaluator
     def initialize(to_interpret)
       @to_interpret = to_interpret
     end

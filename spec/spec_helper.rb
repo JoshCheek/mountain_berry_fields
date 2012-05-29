@@ -20,7 +20,7 @@ module Mock
     define(:declare_failure) { }
   end
 
-  class Interpreter
+  class Evaluator
     Surrogate.endow self
     define(:initialize)  {}
     define(:tests_pass?) { true }
@@ -28,8 +28,8 @@ module Mock
   end
 end
 
-ReadmeTester.override(:file_class)        { Mock::File.clone }
-ReadmeTester.override(:interaction)       { Mock::Interaction.new }
-ReadmeTester.override(:interpreter_class) { Mock::Interpreter.clone }
+ReadmeTester.override(:file_class)      { Mock::File.clone }
+ReadmeTester.override(:interaction)     { Mock::Interaction.new }
+ReadmeTester.override(:evaluator_class) { Mock::Evaluator.clone }
 
 ReadmeTester::CommandLineInteraction.override(:stderr) { StringIO.new }
