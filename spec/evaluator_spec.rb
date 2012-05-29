@@ -5,29 +5,59 @@ describe ReadmeTester::Evaluator do
     Mock::Evaluator.should substitute_for described_class, subset: true
   end
 
-  it 'interprets text as text'
-  it 'removes <% ... %> lines'
-  it 'ignores <%= ... %> lines'
-
-  context '<% test "name", strategy: :strategy_name %> code <% end %>' do
-    it "records the test's name"
-    it "records the test's strategy name"
-    it "records the test's code"
+  def result_for(text)
+    described_class.new(text).result
   end
 
-  # # Whatever
-  #
-  #     <% test 'I will pass', strategy: :always_pass %>
-  #     some code
-  #     <% end %>
+  it 'interprets text as text' do
+    result_for("abc\n").should == "abc\n"
+  end
 
-  # # Whatever
-  #
-  # Some text
-  #     some code
-  specify 'for now, tests always pass and result is same as init' do
-    tester = described_class.new("blah")
-    tester.tests_pass?.should == true
-    tester.result.should == "blah"
+  it 'results always end with a newline' do
+    result_for("abc").should == "abc\n"
+  end
+
+  it 'removes <% valid_comand %> lines' do
+    result_for("a\n<% test 'name', strategy: :always_pass %>\n b\n c\n<% end %>").should == "a\n b\n c\n"
+    result_for("a\n <% test 'name', strategy: :always_pass %>\n <% end %>").should == "a\n"
+  end
+
+  it 'raises a YoDawgThisIsntReallyERB error on <% not_valid_command %> lines' do
+    expect { result_for "a\n<% if true %>do shit<% end %>" }.to raise_error ReadmeTester::YoDawgThisIsntReallyERB, /" if true "/
+  end
+
+  # what should it do for inline?
+
+  it 'raises a YoDawgThisIsntReallyERB error for <%= ... %> lines' do
+    expect { result_for "a\n<%= b %>\n<% end %>\n" }.to raise_error ReadmeTester::YoDawgThisIsntReallyERB, /<%= b %>/
+  end
+
+  specify 'unbalanced code (commands within commands, ends without commands) raises an error' do
+    expect_error = lambda do |regex, code|
+      expect { result_for code }.to raise_error ReadmeTester::UnbalancedCommands, regex
+    end
+    expect_error[/nested commands/i, "<% test 'name', strategy: :always_pass %><% test 'name2', strategy: :always_pass %><% end %><% end %>"]
+    expect_error[/end without an open command/i, "<% end %>"]
+  end
+
+  context 'the test command' do
+    let(:test)          { described_class.new(text).tests.first }
+    let(:test_name)     { 'some test name' }
+    let(:strategy_name) { :always_pass }
+    let(:test_code)     { 'some test code' }
+    let(:text)          { "some bullshit\n<% test #{test_name.inspect}, strategy: #{strategy_name.inspect} %>\n#{test_code}\n<% end %>\nmore bullshit" }
+
+    it "records the test's name" do
+      test.name.should == test_name
+    end
+
+    # eventually it will be able to specify a strategy or a context
+    it "records the test's strategy name" do
+      test.strategy.should == strategy_name
+    end
+
+    it "records the test's code" do
+      test.code.chomp.should == test_code
+    end
   end
 end

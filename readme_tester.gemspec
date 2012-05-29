@@ -15,6 +15,8 @@ Gem::Specification.new do |gem|
   gem.require_paths = ["lib"]
   gem.version       = ReadmeTester::VERSION
 
+  gem.add_runtime_dependency 'erubis', '= 2.7.0'
+
   gem.add_development_dependency 'deject',    '~> 0.2.2'
   gem.add_development_dependency 'surrogate', '~> 0.4.2'
   gem.add_development_dependency 'rspec',     '~> 2.10.0'
