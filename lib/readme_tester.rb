@@ -26,11 +26,11 @@ class ReadmeTester
   end
 
   def evaluator
-    @evaluator ||= evaluator_class.new
+    @evaluator ||= evaluator_class.new parser.parse
   end
 
   def parser
-    @parser ||= parser_class.new file_class.read(filename), evaluator
+    @parser ||= parser_class.new file_class.read(filename)
   end
 
 private
@@ -55,9 +55,8 @@ private
 
   def execute!
     begin
-      parser.parse
       if evaluator.tests_pass?
-        file_class.write output_filename_for(filename), parser.parsed
+        file_class.write output_filename_for(filename), evaluator.document
         SUCCESS_STATUS
       else
         interaction.declare_failure evaluator.failure_message

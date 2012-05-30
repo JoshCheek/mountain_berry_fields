@@ -1,110 +1,90 @@
 require 'erubis'
 
 class ReadmeTester
-  YoDawgThisIsntReallyERB = Class.new StandardError
-  UnbalancedCommands      = Class.new StandardError
 
-  class Parser
-    attr_accessor :original_source, :evaluator
+  class Parser < Erubis::Eruby
+    class Recording
+      def initialize(is_command, is_visible=true)
+        @is_command = is_command
+        @is_visible = is_visible
+      end
 
-    include Erubis::Evaluator
-    include Erubis::Basic::Converter
-    include Erubis::Generator
+      def command?
+        @is_command
+      end
 
-    def initialize(source, evaluator)
-      init_generator Hash.new
-      init_converter trim: true
-      init_evaluator Hash.new
+      def visible?
+        @is_visible
+      end
 
-      self.original_source = source
-      self.evaluator = evaluator
-    end
+      def recorded
+        @recorded ||= ''
+      end
 
-    def parse
-      @parsed ||= convert original_source
-    end
-
-    def parsed
-      @parsed
-    end
-
-    # temp method I'm using to track how Erubis hands me things
-    def record(name, *args)
-      puts "RECORDED: #{name}(#{args.map(&:inspect).join ', '})"
-    end
-
-    def add_text(src, text)
-      current_command_code << text if in_command?
-      src << text
-    end
-
-    def add_stmt(src, code)
-      remove_last_line src if last_line_empty?(src)
-      if known_command? code
-        start_command code
-      elsif end_command? code
-        end_current_command
-      else
-        raise YoDawgThisIsntReallyERB, "It doesn't support #{code.inspect}, it only supports #{evaluator.known_commands}"
+      def record(text)
+        recorded << text if command?
       end
     end
 
-    def add_expr_literal(src, code)
-      raise YoDawgThisIsntReallyERB, "It doesn't support <%=#{code}%>"
-    end
+    attr_accessor :visible_commands, :invisible_commands, :known_commands, :recordings
 
-    def add_expr_escaped(src, code)
-      record :add_expr_escaped, src, code
-    end
-
-    def add_expr_debug(src, code)
-      # do nothing
+    def init_generator(properties={})
+      self.recordings         = [Recording.new(false)]
+      self.visible_commands   = (properties.delete(:visible)   || []).map &:to_s
+      self.invisible_commands = (properties.delete(:invisible) || []).map &:to_s
+      self.known_commands     = visible_commands + invisible_commands
+      super
     end
 
     def add_preamble(src)
-      # do nothing
+      super
     end
 
     def add_postamble(src)
-      src << "\n" unless src.end_with? "\n"
+      src << "#{@bufvar} << %(\\n) unless #{@bufvar}.end_with? %(\\n);"
+      src << "document << #{@bufvar};"
     end
 
-    def remove_last_line(src)
-      src.sub! /^.*?\z/, ''
+    def parse
+      src
     end
 
-    def last_line_empty?(src)
-      src =~ /^\s+\z/
+    def add_text(src, text)
+      recordings.last.record text
+      super if recordings.last.visible?
     end
 
-    def start_command(code)
-      raise UnbalancedCommands, "Document has nested commands, can't do #{code.inspect}" if in_command?
-      self.current_command = code
-      self.current_command_code = ''
+    def known_command?(code_with_command)
+      known_commands.include? code_with_command[/\w+/]
     end
 
-    def end_current_command
-      raise UnbalancedCommands, "You have an end without an open command" unless in_command?
-      add_command current_command, current_command_code
-      self.current_command = self.current_command_code = nil
+    def visible_command?(code_with_command)
+      visible_commands.include? code_with_command[/\w+/]
     end
 
-    def add_command(code_containing_command, body)
-      eval "evaluator.add_#{code_containing_command.sub(/^\s*/, '').chomp}, code: body"
+    def end_command?(code_with_command)
+      code_with_command =~ /\A\s*(end|})/
     end
 
-    def end_command?(code_containing_command)
-      code_containing_command[/\w+/] == 'end'
+    def add_stmt(src, code)
+      manage_recording src, code
+      super
     end
 
-    def known_command?(code_containing_command)
-      evaluator.known_commands.include? code_containing_command[/\w+/]
+    def add_expr_literal(src, code)
+      manage_recording src, code
+      super
     end
 
-    def in_command?
-      !!current_command
+    def manage_recording(src, code)
+      if known_command? code
+        recordings << Recording.new(true, visible_command?(code))
+      elsif end_command? code
+        recording = recordings.pop
+        src << recording.recorded.inspect << ";" if recording.command?
+      else
+        recordings << Recording.new(false)
+      end
     end
-
-    attr_accessor :current_command_code, :current_command
   end
 end

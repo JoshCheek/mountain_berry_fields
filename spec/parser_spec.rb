@@ -1,41 +1,112 @@
 require 'spec_helper'
 
 describe ReadmeTester::Parser do
-  let(:evaluator) { Mock::Evaluator.new }
+  let :evaluator_class do
+    Class.new do
+      attr_reader :document, :visible_saw, :invisible_saw
+
+      def initialize
+        @document = ''
+        @visible_saw = []
+        @invisible_saw = []
+      end
+
+      def visible
+        @visible_saw << yield
+        'visible'
+      end
+
+      def invisible
+        @invisible_saw << yield
+        'invisible'
+      end
+
+      def inspect
+        "#<evaluator_class>"
+      end
+    end
+  end
+
+  attr_reader :evaluator
 
   def parsed(text)
-    described_class.new(text, evaluator).parse
+    program = described_class.new(text, visible: [:visible], invisible: [:invisible]).parse
+    @evaluator = evaluator_class.new
+    @evaluator.instance_eval program
+    @evaluator.document
   end
 
-  it 'interprets text as text' do
-    parsed("abc\n").should == "abc\n"
+  it 'parses normal erb code' do
+    parsed("a\n<% if true %>\ndo shit\n<% end %>b").should == "a\ndo shit\nb\n"
+    parsed("a\n<% if false %>do shit<% end %>b").should == "a\nb\n"
+    parsed("a<% if true %>b<% end %>c").should == "abc\n"
+    parsed("a<%= 1 + 2 %>b").should == "a3b\n"
+    parsed("a<%# comment %>b").should == "ab\n"
+    parsed("a<%% whatev %>b").should == "a<% whatev %>b\n"
+    parsed("a<%%= whatev %>b").should == "a<%= whatev %>b\n"
   end
 
-  it 'results always end with a newline' do
+  specify 'results always end with a newline' do
     parsed("abc").should == "abc\n"
   end
 
-  it 'removes <% valid_comand %> lines' do
-    parsed("a\n<% test 'name', strategy: :always_pass %>\n b\n c\n<% end %>").should == "a\n b\n c\n"      # shit in the middle
-    parsed("a\n \t<% test 'name', strategy: :always_pass %>\n  b\n \t<% end %>").should == "a\n  b\n"      # leading whitespace
-    parsed("a\n\n<% test 'name', strategy: :always_pass %>\n<% end %>\n\nb").should == "a\n\n\nb\n"        # multiple newlines
-  end
-
-  it 'raises a YoDawgThisIsntReallyERB error on <% not_valid_command %> lines' do
-    expect { parsed "a\n<% if true %>do shit<% end %>" }.to raise_error ReadmeTester::YoDawgThisIsntReallyERB, /" if true "/
-  end
-
-  # what should it do for inline?
-
-  it 'raises a YoDawgThisIsntReallyERB error for <%= ... %> lines' do
-    expect { parsed "a\n<%= b %>\n<% end %>\n" }.to raise_error ReadmeTester::YoDawgThisIsntReallyERB, /<%= b %>/
-  end
-
-  specify 'unbalanced code (commands within commands, ends without commands) raises an error' do
-    expect_error = lambda do |regex, code|
-      expect { parsed code }.to raise_error ReadmeTester::UnbalancedCommands, regex
+  describe 'visible methods' do
+    specify 'are provided in a list to the constructor and converted to strings' do
+      described_class.new('', visible: [:a]).visible_commands.should == ['a']
     end
-    expect_error[/nested commands/i, "<% test 'name', strategy: :always_pass %><% test 'name2', strategy: :always_pass %><% end %><% end %>"]
-    expect_error[/end without an open command/i, "<% end %>"]
+
+    specify 'default to an empty array' do
+      described_class.new('').visible_commands.should == []
+    end
+
+    specify 'show up in the document when evaluated' do
+      parsed("a<% visible do %>b<% end %>c").should == "abc\n"
+    end
+
+    def visible_in(code)
+      parsed code
+      evaluator.visible_saw
+    end
+
+    specify 'are returned when the block is invoked' do
+      visible_in("a<% visible do %>b<% end %>c").should == ['b']
+    end
+
+    specify "support basic nesting (can't do complex nesting without editing parse trees -- not a big deal, these are things that even erubis can't do)" do
+      visible_in("a<%visible {%>b<%visible {%>c<% } %>d<% } %>e").should == ['c', 'bd']
+      visible_in("a<%visible {%>b<%if false %>c<% end %>d<% } %>e").should == ['bd']
+      visible_in("<%# visible %>").should == []
+      visible_in('<% visible do %>\'a\'\\<% end %>').should == ['\'a\'\\']
+    end
+  end
+
+  describe 'invisible methods' do
+    specify 'are provided in a list to the constructor and converted to strings' do
+      described_class.new('', invisible: [:a]).invisible_commands.should == ['a']
+    end
+
+    specify 'default to an empty array' do
+      described_class.new('').invisible_commands.should == []
+    end
+
+    specify 'do not show up in the document when evaluated' do
+      parsed("a<% invisible do %>b<% end %>c").should == "ac\n"
+    end
+
+    def invisible_in(code)
+      parsed code
+      evaluator.invisible_saw
+    end
+
+    specify 'are returned when the block is invoked' do
+      invisible_in("a<% invisible do %>b<% end %>c").should == ['b']
+    end
+
+    specify "support basic nesting (can't do complex nesting without editing parse trees -- not a big deal, these are things that even erubis can't do)" do
+      invisible_in("a<%invisible {%>b<%invisible {%>c<% } %>d<% } %>e").should == ['c', 'bd']
+      invisible_in("a<%invisible {%>b<%if false %>c<% end %>d<% } %>e").should == ['bd']
+      invisible_in("<%# invisible %>").should == []
+      invisible_in('<% invisible do %>\'a\'\\<% end %>').should == ['\'a\'\\']
+    end
   end
 end

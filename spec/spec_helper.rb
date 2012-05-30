@@ -22,11 +22,12 @@ module Mock
 
   class Evaluator
     Surrogate.endow self
-    define(:initialize)      {}
+    define(:initialize)      { @document = '' }
     define(:tests_pass?)     { true }
     define(:known_commands)  { ['test'] }
-    define(:add_test)        { |test| [test] }
+    define(:add_test)        { |test, &block| block.call }
     define(:failure_message) { 'some failure message' }
+    define(:document)
 
     def inspect
       '#<MOCK EVALUATOR>'

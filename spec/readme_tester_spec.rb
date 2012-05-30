@@ -62,13 +62,13 @@ describe ReadmeTester do
   context 'when unsuccessfully parsing a file' do
     let(:input_filename)   { 'some_invalid_file.md.testable_readme' }
     let(:readme_tester)    { described_class.new [input_filename] }
-    before { parser.will_parse ReadmeTester::UnbalancedCommands.new "some error message" }
+    before { parser.will_parse StandardError.new "some error message" }
 
     it_behaves_like 'a failure'
 
     it 'writes the exception class and message as the error' do
       readme_tester.execute
-      interaction.should have_been_told_to(:declare_failure).with("ReadmeTester::UnbalancedCommands some error message")
+      interaction.should have_been_told_to(:declare_failure).with("StandardError some error message")
     end
   end
 
@@ -77,10 +77,11 @@ describe ReadmeTester do
     let(:output_filename)  { 'some_valid_file.md' }
     let(:readme_tester)    { described_class.new [input_filename] }
     let(:file_body)        { 'SOME FILE BODY' }
-    let(:interpreted_body) { 'INTERPRETED BODY' }
+    let(:parsed_body)      { 'PARSED BODY' }
+    let(:document)         { 'EVALUATED DOCUMENT' }
 
     before { file_class.will_read file_body }
-    before { parser.will_parse interpreted_body }
+    before { parser.will_parse parsed_body }
 
     it 'declares no errors' do
       readme_tester.execute
@@ -90,17 +91,18 @@ describe ReadmeTester do
     it 'passes the file contents to the parser' do
       readme_tester.execute
       file_class.should have_been_told_to(:read).with(input_filename)
-      parser.should have_been_initialized_with file_body, evaluator
+      parser.should have_been_initialized_with file_body
     end
 
     it 'evaluates the results of the parsing' do
       readme_tester.execute
-      evaluator.should have_been_initialized_with no_args
+      evaluator.should have_been_initialized_with parsed_body
     end
 
 
     context 'when the tests pass' do
       before { evaluator.will_tests_pass? true }
+      before { evaluator.will_have_document document }
 
       it 'returns exit status 0' do
         readme_tester.execute.should == 0
@@ -108,7 +110,7 @@ describe ReadmeTester do
 
       it 'writes the interpreted file to the new filename (the same name, but with .testable_readme removed)' do
         readme_tester.execute
-        file_class.should have_been_told_to(:write).with(output_filename, interpreted_body)
+        file_class.should have_been_told_to(:write).with(output_filename, document)
       end
     end
 
@@ -119,6 +121,15 @@ describe ReadmeTester do
         evaluator.will_have_failure_message "faiiil"
         readme_tester.execute
         interaction.should have_been_told_to(:declare_failure).with("faiiil")
+      end
+    end
+
+    context 'when evaluation raises an exception' do
+      before { evaluator.will_tests_pass? StandardError.new('blah') }
+      it_behaves_like 'a failure'
+      it 'writes the exception class and message as the error' do
+        readme_tester.execute
+        interaction.should have_been_told_to(:declare_failure).with("StandardError blah")
       end
     end
   end
