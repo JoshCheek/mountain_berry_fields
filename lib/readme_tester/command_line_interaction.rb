@@ -1,4 +1,7 @@
 class ReadmeTester
+
+  # Iinteractions are used by the ReadmeTester to let the users know what's going on.
+  # This one interacts with the command line.
   class CommandLineInteraction
     Deject self
     dependency(:stderr) { $stderr }

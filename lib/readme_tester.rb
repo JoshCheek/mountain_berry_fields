@@ -8,6 +8,11 @@ def ReadmeTester(argv)
   ReadmeTester.new(argv).execute
 end
 
+
+# Ties everything together. It gets the file, passes it to the parser,
+# passes the result to the evaluator, and writes the file. If anything
+# goes wrong along the way, it declares the failure to the interaction,
+# and returns an exit status of 1
 class ReadmeTester
   Deject self, :interaction
   dependency(:evaluator_class) { Evaluator }

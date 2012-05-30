@@ -1,4 +1,6 @@
 module ReadmeTester::Commands
+
+  # Data structure to store the shit passed to the test method
   class Test
     attr_accessor :name, :options
 
@@ -17,6 +19,13 @@ module ReadmeTester::Commands
 
 
   class Test
+
+    # You want to run tests, amirite? So you need something that runs them.
+    # Right now that's called a strategy (expect that to change). Strategies
+    # take the code to test as a string, and then test them and return if they
+    # pass or fail.
+    #
+    # Strategies should probably be registered so that the evaluator can find them.
     module Strategy
       @registered = {}
 
@@ -28,10 +37,10 @@ module ReadmeTester::Commands
         @registered[name] = strategy
       end
 
-      attr_accessor :code_to_test
+      attr_reader :code_to_test
 
       def initialize(code_to_test)
-        self.code_to_test = code_to_test
+        @code_to_test = code_to_test
       end
 
       def pass?
@@ -44,6 +53,9 @@ module ReadmeTester::Commands
     end
 
 
+    # Ask it if it passes
+    #
+    # (it does)
     class AlwaysPass
       Strategy.register :always_pass, self
 
@@ -57,6 +69,7 @@ module ReadmeTester::Commands
     end
 
 
+    # Red. Red. Refactor anyway, cuz fuck it.
     class AlwaysFail
       Strategy.register :always_fail, self
 

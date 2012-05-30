@@ -2,6 +2,17 @@ require 'erubis'
 
 class ReadmeTester
 
+  # This class takes a document with erb in it
+  # It parses the erb and gives you back a file of source code
+  # When that source code is evaluated, you get the file out.
+  # The evaluation environment is expected to provide a `document` method or local variable,
+  # which is a string that the template will be appended to.
+  #
+  # It differs from normal ERB in that you can pass it :visible and :invisible commands lists.
+  # Code inside of a block around an invisible command (method name) will not be added to the document.
+  # Any command invoked at the start of an erb block (<% and <%=) will be checked against the
+  # visible and invisible lists, if they are on either list, their block will return the
+  # text in the template that was written in the block.
   class Parser < Erubis::Eruby
     class Recording
       def initialize(is_command, is_visible=true)
