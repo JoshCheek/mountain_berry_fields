@@ -53,10 +53,11 @@ describe ReadmeTester::Evaluator do
       evaluator.tests_pass?.should == true
     end
 
-    it 'returns the failure message, if any of its tests fail' do
+    it 'tracks the failure name and message, if any of its tests fail' do
       evaluator = described_class.new ''
-      evaluator.test('Failing Test', strategy: :always_fail) {}
+      evaluator.test('Failbert', strategy: :always_fail) {}
       evaluator.tests_pass?.should == false
+      evaluator.failure_name.should == 'Failbert'
       evaluator.failure_message.should == ReadmeTester::Commands::Test::Strategy.for(:always_fail).new('').failure_message
     end
   end

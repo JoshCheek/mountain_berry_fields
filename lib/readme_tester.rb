@@ -61,7 +61,7 @@ private
         file_class.write output_filename_for(filename), evaluator.document
         SUCCESS_STATUS
       else
-        interaction.declare_failure evaluator.failure_message
+        interaction.declare_failure "FAILURE: #{evaluator.failure_name}\n#{evaluator.failure_message}"
         FAILURE_STATUS
       end
     rescue StandardError

@@ -16,7 +16,7 @@ module ProvingGrounds
   end
 
   def remove_proving_grounds
-    # FileUtils.rm_r proving_grounds_dir
+    FileUtils.rm_r proving_grounds_dir
   end
 end
 

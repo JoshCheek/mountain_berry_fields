@@ -1,5 +1,0 @@
-# Whatever
-
-    <% test 'I will fail', strategy: :always_fail do %>
-    some code
-    <% end %>

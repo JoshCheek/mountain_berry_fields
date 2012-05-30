@@ -21,3 +21,7 @@ Then 'I see the file "$filename"' do |filename, body|
       strip_trailing_whitespace(body)
   end
 end
+
+And 'I do not see the file "$filename"' do |filename|
+  in_proving_grounds { File.exist?(filename).should be_false }
+end

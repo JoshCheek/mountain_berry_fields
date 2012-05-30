@@ -1,4 +1,3 @@
-@wip
 Feature: Simple test
 
   Scenario: Error when the test passes
@@ -32,7 +31,7 @@ Feature: Simple test
     When I run "readme_tester Readme.md.testable_readme"
     Then it exits with a status of 1, and a stderr of
     """
-    Failure:  I will fail
-    This test will always fail.
+    FAILURE: I will fail
+    THIS STRATEGY ALWAYS FAILS
     """
     And I do not see the file "Readme.md"
