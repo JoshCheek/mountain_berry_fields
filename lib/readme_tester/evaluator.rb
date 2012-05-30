@@ -43,10 +43,6 @@ class ReadmeTester
       tests << test
     end
 
-    def known_commands
-      %w[test]
-    end
-
     def document
       evaluate
       @document ||= ''

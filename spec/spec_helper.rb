@@ -28,7 +28,6 @@ module Mock
 
     define(:initialize)      { @document = '' }
     define(:tests_pass?)     { true }
-    define(:known_commands)  { ['test'] }
     define(:test)            { |test, &block| block.call }
     define(:failure_message) { 'some failure message' }
     define(:failure_name)    { 'failing test name' }
