@@ -16,3 +16,4 @@ test/tmp
 test/version_tmp
 tmp
 features/proving_grounds
+.DS_Store
