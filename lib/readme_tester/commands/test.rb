@@ -50,7 +50,9 @@ module ReadmeTester::Commands
       include Strategy
 
       def pass?
-        true
+        eval code_to_test || ''
+      ensure
+        return true
       end
     end
 
@@ -61,7 +63,9 @@ module ReadmeTester::Commands
       include Strategy
 
       def pass?
-        false
+        eval code_to_test || ''
+      ensure
+        return false
       end
 
       def failure_message
@@ -69,6 +73,4 @@ module ReadmeTester::Commands
       end
     end
   end
-
-
 end

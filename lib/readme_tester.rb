@@ -30,7 +30,9 @@ class ReadmeTester
   end
 
   def parser
-    @parser ||= parser_class.new file_class.read(filename)
+    @parser ||= parser_class.new  file_class.read(filename),
+                                  visible:   evaluator_class.visible_commands,
+                                  invisible: evaluator_class.invisible_commands
   end
 
 private

@@ -73,12 +73,12 @@ describe ReadmeTester do
   end
 
   context 'when successfully parsing a file' do
-    let(:input_filename)   { 'some_valid_file.md.testable_readme' }
-    let(:output_filename)  { 'some_valid_file.md' }
-    let(:readme_tester)    { described_class.new [input_filename] }
-    let(:file_body)        { 'SOME FILE BODY' }
-    let(:parsed_body)      { 'PARSED BODY' }
-    let(:document)         { 'EVALUATED DOCUMENT' }
+    let(:input_filename)     { 'some_valid_file.md.testable_readme' }
+    let(:output_filename)    { 'some_valid_file.md' }
+    let(:readme_tester)      { described_class.new [input_filename] }
+    let(:file_body)          { 'SOME FILE BODY' }
+    let(:parsed_body)        { 'PARSED BODY' }
+    let(:document)           { 'EVALUATED DOCUMENT' }
 
     before { file_class.will_read file_body }
     before { parser.will_parse parsed_body }
@@ -89,9 +89,11 @@ describe ReadmeTester do
     end
 
     it 'passes the file contents to the parser' do
+      visible_commands = readme_tester.evaluator_class.visible_commands
+      invisible_commands = readme_tester.evaluator_class.invisible_commands
       readme_tester.execute
       file_class.should have_been_told_to(:read).with(input_filename)
-      parser.should have_been_initialized_with file_body
+      parser.should have_been_initialized_with file_body, visible: visible_commands, invisible: invisible_commands
     end
 
     it 'evaluates the results of the parsing' do

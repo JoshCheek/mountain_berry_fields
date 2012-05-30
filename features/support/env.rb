@@ -16,18 +16,22 @@ module ProvingGrounds
   end
 
   def remove_proving_grounds
-    FileUtils.rm_r proving_grounds_dir
+    # FileUtils.rm_r proving_grounds_dir
   end
 end
 
 
-module Curlies
+module Helpers
   def interpret_curlies(string)
     string.gsub /{{.*?}}/ do |code|
       code.sub! /^{{/, ''
       code.sub! /}}$/, ''
       eval code
     end
+  end
+
+  def strip_trailing_whitespace(text)
+    text.gsub /\s+$/, ''
   end
 end
 
@@ -64,5 +68,5 @@ ENV['PATH'] = "#{File.expand_path "../../../bin", __FILE__}:#{ENV['PATH']}"
 ENV['YO_IM_TESTING_README_SHIT_RIGHT_NOW'] = 'FOR_REALSIES'
 World ProvingGrounds
 World CommandLine::CukeHelpers
-World Curlies
+World Helpers
 After { remove_proving_grounds }

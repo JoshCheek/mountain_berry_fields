@@ -21,11 +21,15 @@ module Mock
   end
 
   class Evaluator
-    Surrogate.endow self
+    Surrogate.endow self do
+      define(:visible_commands)   { [:visible] }
+      define(:invisible_commands) { [:invisible] }
+    end
+
     define(:initialize)      { @document = '' }
     define(:tests_pass?)     { true }
     define(:known_commands)  { ['test'] }
-    define(:add_test)        { |test, &block| block.call }
+    define(:test)            { |test, &block| block.call }
     define(:failure_message) { 'some failure message' }
     define(:document)
 

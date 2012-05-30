@@ -16,5 +16,8 @@ Then /^it exits with a status of (\d+), and a stderr of$/ do |status, stderr|
 end
 
 Then 'I see the file "$filename"' do |filename, body|
-  in_proving_grounds { File.read(filename).chomp.should == body.chomp }
+  in_proving_grounds do
+    strip_trailing_whitespace(File.read(filename)).should ==
+      strip_trailing_whitespace(body)
+  end
 end

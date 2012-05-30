@@ -6,8 +6,17 @@ describe test_class::AlwaysFail do
     test_class::Strategy.for(:always_fail).should == described_class
   end
 
-  specify '#pass? returns false' do
-    described_class.new("# this test will still fail").pass?.should == false
+  it 'evaluates the code' do
+    $a = nil
+    described_class.new('$a=1').pass?
+    $a.should == 1
+  end
+
+  specify '#pass? evaluates the code and returns false even in the face of bullshit' do
+    described_class.new("raise Exception, 'this will still pass'").pass?.should == false
+    $abc = ''
+    described_class.new("$abc=123").pass?.should == false
+    $abc.should == 123
   end
 
   specify '#failure_message returns some bullshit about failing' do

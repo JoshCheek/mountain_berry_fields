@@ -21,6 +21,14 @@ describe ReadmeTester::Parser do
         'invisible'
       end
 
+      def record_args(*args)
+        @recorded_args = args
+      end
+
+      def recorded_args
+        @recorded_args
+      end
+
       def inspect
         "#<evaluator_class>"
       end
@@ -28,6 +36,21 @@ describe ReadmeTester::Parser do
   end
 
   attr_reader :evaluator
+
+  def visible_in(code)
+    parsed code
+    evaluator.visible_saw
+  end
+
+  def invisible_in(code)
+    parsed code
+    evaluator.invisible_saw
+  end
+
+  def recorded_args(code)
+    parsed code
+    evaluator.recorded_args
+  end
 
   def parsed(text)
     program = described_class.new(text, visible: [:visible], invisible: [:invisible]).parse
@@ -44,6 +67,9 @@ describe ReadmeTester::Parser do
     parsed("a<%# comment %>b").should == "ab\n"
     parsed("a<%% whatev %>b").should == "a<% whatev %>b\n"
     parsed("a<%%= whatev %>b").should == "a<%= whatev %>b\n"
+    parsed("a<% if 'I' %>b<% end %>c").should == "abc\n"
+    recorded_args("a<% record_args 'I' %>").should == ['I']
+    recorded_args("a<%= record_args 'I' %>").should == ['I']
   end
 
   specify 'results always end with a newline' do
@@ -61,11 +87,6 @@ describe ReadmeTester::Parser do
 
     specify 'show up in the document when evaluated' do
       parsed("a<% visible do %>b<% end %>c").should == "abc\n"
-    end
-
-    def visible_in(code)
-      parsed code
-      evaluator.visible_saw
     end
 
     specify 'are returned when the block is invoked' do
@@ -91,11 +112,6 @@ describe ReadmeTester::Parser do
 
     specify 'do not show up in the document when evaluated' do
       parsed("a<% invisible do %>b<% end %>c").should == "ac\n"
-    end
-
-    def invisible_in(code)
-      parsed code
-      evaluator.invisible_saw
     end
 
     specify 'are returned when the block is invoked' do

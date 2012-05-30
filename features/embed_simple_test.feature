@@ -6,7 +6,7 @@ Feature: Simple test
     """
     # Whatever
 
-        <% test 'I will pass', strategy: :always_pass %>
+        <% test 'IS will pass', strategy: :always_pass do %>
         some code
         <% end %>
     """
@@ -16,6 +16,7 @@ Feature: Simple test
     """
     # Whatever
 
+
         some code
     """
 
@@ -24,7 +25,7 @@ Feature: Simple test
     """
     # Whatever
 
-        <% test 'I will fail', strategy: :always_fail %>
+        <% test 'I will fail', strategy: :always_fail do %>
         some code
         <% end %>
     """

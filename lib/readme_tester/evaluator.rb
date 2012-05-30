@@ -8,10 +8,16 @@ class ReadmeTester
       @to_evaluate = to_evaluate
     end
 
+    def self.visible_commands
+      [:test]
+    end
+
+    def self.invisible_commands
+      []
+    end
+
     def tests_pass?
       evaluate
-      strategies = tests.map { |test| Commands::Test::Strategy.for(test.strategy).new(test.code) }
-      @failing_test = strategies.find { |s| !s.pass? }
       !@failing_test
     end
 
@@ -23,8 +29,11 @@ class ReadmeTester
       @tests ||= []
     end
 
-    def add_test(name, options={})
-      tests << Commands::Test.new(name, options)
+    def test(name, options={}, &block)
+      test = Commands::Test.new(name, options.merge(code: block.call))
+      strategy = Commands::Test::Strategy.for(test.strategy).new(test.code)
+      @failing_test = strategy unless strategy.pass?
+      tests << test
     end
 
     def known_commands
