@@ -1,4 +1,3 @@
-@not-implemented
 Feature: Integrate with xmpfilter
 
   Scenario: Passing xmpfilter
@@ -6,7 +5,7 @@ Feature: Integrate with xmpfilter
     """
     # Whatever
 
-        <% test 'basic addition', strategy: :xmpfilter %>
+        <% test 'basic addition', strategy: :xmpfilter do %>
         1 + 1 # => 2
         <% end %>
 
@@ -28,7 +27,7 @@ Feature: Integrate with xmpfilter
     """
     # Whatever
 
-        <% test 'basic addition', strategy: :xmpfilter %>
+        <% test 'basic addition', strategy: :xmpfilter do %>
         1 + 2 # => 2
         <% end %>
 
@@ -37,7 +36,7 @@ Feature: Integrate with xmpfilter
     When I run "readme_tester Readme.md.testable_readme"
     Then it exits with a status of 1, and a stderr of
     """
-    Failure:  basic addition, line 1
+    FAILURE: basic addition
     Expected: 1 + 2 # => 2
     Actual:   1 + 2 # => 3
     """
