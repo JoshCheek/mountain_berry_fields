@@ -1,11 +1,11 @@
 require 'spec_helper'
 
-describe ReadmeTester::CommandLineInteraction do
+describe MountainBerryFields::CommandLineInteraction do
   let(:interaction) { described_class.new }
   let(:stderr)      { interaction.stderr.string }
 
   it 'implements the interaction interface' do
-    Mock::Interaction.should substitute_for ReadmeTester::CommandLineInteraction, subset: true
+    Mock::Interaction.should substitute_for MountainBerryFields::CommandLineInteraction, subset: true
   end
 
   specify '#declare_failure(message) writes messages to stderr, with newlines' do

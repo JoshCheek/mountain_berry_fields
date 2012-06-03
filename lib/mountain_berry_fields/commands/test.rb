@@ -1,4 +1,4 @@
-module ReadmeTester::Commands
+module MountainBerryFields::Commands
 
   # Data structure to store the shit passed to the test method
   class Test

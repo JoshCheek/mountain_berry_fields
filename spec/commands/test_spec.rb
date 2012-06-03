@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-module ReadmeTester::Commands
+module MountainBerryFields::Commands
   describe Test do
     let(:name)          { 'Some name' }
     let(:code)          { 'Some code' }

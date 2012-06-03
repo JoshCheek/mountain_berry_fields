@@ -1,0 +1,9 @@
+#!/usr/bin/env ruby
+
+$LOAD_PATH.unshift File.expand_path('../../lib/', __FILE__)
+
+require 'mountain_berry_fields'
+require 'mountain_berry_fields/command_line_interaction'
+MountainBerryFields.override(:interaction) { MountainBerryFields::CommandLineInteraction.new }
+
+exit MountainBerryFields.new(ARGV).execute

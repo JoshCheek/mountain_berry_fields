@@ -1,7 +1,7 @@
 require 'simplecov'
 
-require 'readme_tester'
-require 'readme_tester/command_line_interaction'
+require 'mountain_berry_fields'
+require 'mountain_berry_fields/command_line_interaction'
 
 require 'stringio'
 require 'surrogate/rspec'
@@ -50,9 +50,9 @@ module Mock
   end
 end
 
-ReadmeTester.override(:file_class)      { Mock::File.clone }
-ReadmeTester.override(:interaction)     { Mock::Interaction.new }
-ReadmeTester.override(:evaluator_class) { Mock::Evaluator.clone }
-ReadmeTester.override(:parser_class)    { Mock::Parser.clone }
+MountainBerryFields.override(:file_class)      { Mock::File.clone }
+MountainBerryFields.override(:interaction)     { Mock::Interaction.new }
+MountainBerryFields.override(:evaluator_class) { Mock::Evaluator.clone }
+MountainBerryFields.override(:parser_class)    { Mock::Parser.clone }
 
-ReadmeTester::CommandLineInteraction.override(:stderr) { StringIO.new }
+MountainBerryFields::CommandLineInteraction.override(:stderr) { StringIO.new }

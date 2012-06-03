@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-described_class = ReadmeTester::Commands::Test::Strategy
+described_class = MountainBerryFields::Commands::Test::Strategy
 
 describe described_class do
   it 'is a module that you can mix into any class that wants to be a strategy' do

@@ -1,6 +1,6 @@
-require 'readme_tester/commands'
+require 'mountain_berry_fields/commands'
 
-class ReadmeTester
+class MountainBerryFields
 
   # This class evaluates a block of code that was emitted from the parser.
   # It has a document that the evalutable code can append to.

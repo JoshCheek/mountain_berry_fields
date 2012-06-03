@@ -1,6 +1,6 @@
 require 'erubis'
 
-class ReadmeTester
+class MountainBerryFields
 
   # This class takes a document with erb in it
   # It parses the erb and gives you back a file of source code

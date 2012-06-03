@@ -1,19 +1,19 @@
 # -*- encoding: utf-8 -*-
-require File.expand_path('../lib/readme_tester/version', __FILE__)
+require File.expand_path('../lib/mountain_berry_fields/version', __FILE__)
 
 Gem::Specification.new do |gem|
   gem.authors       = ["Josh Cheek"]
   gem.email         = ["josh.cheek@gmail.com"]
-  gem.description   = %q{Test code samples in readme file}
-  gem.summary       = %q{Test code samples in readme file}
+  gem.description   = %q{Test code samples embedded in files like readmes}
+  gem.summary       = %q{Test code samples embedded in files like readmes}
   gem.homepage      = ""
 
   gem.files         = `git ls-files`.split($\)
   gem.executables   = gem.files.grep(%r{^bin/}).map{ |f| File.basename(f) }
   gem.test_files    = gem.files.grep(%r{^(test|spec|features)/})
-  gem.name          = "readme_tester"
+  gem.name          = "mountain_berry_fields"
   gem.require_paths = ["lib"]
-  gem.version       = ReadmeTester::VERSION
+  gem.version       = MountainBerryFields::VERSION
 
   gem.add_runtime_dependency 'erubis', '= 2.7.0'
 

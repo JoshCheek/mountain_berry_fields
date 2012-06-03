@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-test_class = ReadmeTester::Commands::Test
+test_class = MountainBerryFields::Commands::Test
 
 describe test_class::XMPFilter do
   it 'is registered it the strategy list under :xmpfilter' do

@@ -1,14 +1,13 @@
 require 'deject'
 
-require 'readme_tester/version'
-require 'readme_tester/evaluator'
-require 'readme_tester/parser'
+require 'mountain_berry_fields/version'
+require 'mountain_berry_fields/evaluator'
+require 'mountain_berry_fields/parser'
 
 # Ties everything together. It gets the file, passes it to the parser,
 # passes the result to the evaluator, and writes the file. If anything
-# goes wrong along the way, it declares the failure to the interaction,
-# and returns an exit status of 1
-class ReadmeTester
+# goes wrong along the way, it declares the failure to the interaction
+class MountainBerryFields
   Deject self, :interaction
   dependency(:evaluator_class) { Evaluator }
   dependency(:parser_class)    { Parser }

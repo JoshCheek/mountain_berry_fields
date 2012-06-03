@@ -11,7 +11,7 @@ Feature: Integrate with xmpfilter
 
     More shit here
     """
-    When I run "readme_tester Readme.md.testable_readme"
+    When I run "mountain_berry_fields Readme.md.testable_readme"
     Then it exits with a status of 0
     Then I see the file "Readme.md"
     """
@@ -33,7 +33,7 @@ Feature: Integrate with xmpfilter
 
     More shit here
     """
-    When I run "readme_tester Readme.md.testable_readme"
+    When I run "mountain_berry_fields Readme.md.testable_readme"
     Then it exits with a status of 1, and a stderr of
     """
     FAILURE: basic addition

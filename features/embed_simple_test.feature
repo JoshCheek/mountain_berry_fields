@@ -9,7 +9,7 @@ Feature: Simple test
         some code
         <% end %>
     """
-    When I run "readme_tester Readme.md.testable_readme"
+    When I run "mountain_berry_fields Readme.md.testable_readme"
     Then it exits with a status of 0
     And I see the file "Readme.md"
     """
@@ -28,7 +28,7 @@ Feature: Simple test
         some code
         <% end %>
     """
-    When I run "readme_tester Readme.md.testable_readme"
+    When I run "mountain_berry_fields Readme.md.testable_readme"
     Then it exits with a status of 1, and a stderr of
     """
     FAILURE: I will fail

@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe ReadmeTester::Evaluator do
+describe MountainBerryFields::Evaluator do
   it 'implements the evaluator interface' do
     Mock::Evaluator.should substitute_for described_class, subset: true
   end
@@ -41,7 +41,7 @@ describe ReadmeTester::Evaluator do
 
 
   describe '#tests_pass?' do
-    test_class = ReadmeTester::Commands::Test
+    test_class = MountainBerryFields::Commands::Test
 
     it 'evaluates the text if not evaluated' do
       should_evaluate { |evaluator| evaluator.tests_pass? }
@@ -58,7 +58,7 @@ describe ReadmeTester::Evaluator do
       evaluator.test('Failbert', strategy: :always_fail) {}
       evaluator.tests_pass?.should == false
       evaluator.failure_name.should == 'Failbert'
-      evaluator.failure_message.should == ReadmeTester::Commands::Test::Strategy.for(:always_fail).new('').failure_message
+      evaluator.failure_message.should == MountainBerryFields::Commands::Test::Strategy.for(:always_fail).new('').failure_message
     end
   end
 

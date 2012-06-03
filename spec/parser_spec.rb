@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe ReadmeTester::Parser do
+describe MountainBerryFields::Parser do
   let :evaluator_class do
     Class.new do
       attr_reader :document, :visible_saw, :invisible_saw
