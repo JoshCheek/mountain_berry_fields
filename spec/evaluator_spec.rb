@@ -71,6 +71,8 @@ describe MountainBerryFields::Evaluator do
       described_class.invisible_commands.should be_a_kind_of Array
     end
   end
+
+
   describe '#test' do
     it 'is visible' do
       described_class.visible_commands.should include :test
@@ -92,6 +94,30 @@ describe MountainBerryFields::Evaluator do
         '$abc = "abc"'
       end
       $abc.should == 'abc'
+    end
+  end
+
+
+  describe '#setup' do
+    it 'is invisible' do
+      described_class.invisible_commands.should include :setup
+    end
+
+    it 'is prepended before each test added after it' do
+      evaluator.test('name', with: :always_pass) { "test1\n" }
+      evaluator.setup { "setup\n" }
+      evaluator.test('name', with: :always_pass) { "test2\n" }
+      evaluator.test('name', with: :always_pass) { "test3\n" }
+      evaluator.tests[0].code.should == "test1\n"
+      evaluator.tests[1].code.should == "setup\ntest2\n"
+      evaluator.tests[2].code.should == "setup\ntest3\n"
+    end
+
+    it 'appends to the setup code if invoked multiple times' do
+      evaluator.setup { "setup1\n" }
+      evaluator.setup { "setup2\n" }
+      evaluator.test('name', with: :always_pass) { "test1\n" }
+      evaluator.tests.first.code.should == "setup1\nsetup2\ntest1\n"
     end
   end
 end

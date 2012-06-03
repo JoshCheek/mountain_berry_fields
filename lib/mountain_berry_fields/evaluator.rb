@@ -20,7 +20,26 @@ class MountainBerryFields
     end
 
     def self.invisible_commands
-      []
+      [:setup]
+    end
+
+    def setup
+      setup_code << yield
+    end
+
+    def setup_code
+      @setup_code ||= ''
+    end
+
+    def test(name, options={}, &block)
+      code = setup_code + block.call.to_s
+      test = Commands::Test.new(name, options.merge(code: code))
+      strategy = Commands::Test::Strategy.for(test.strategy).new(test.code)
+      unless strategy.pass?
+        @failing_strategy = strategy
+        @failing_test     = test
+      end
+      tests << test
     end
 
     def tests_pass?
@@ -38,16 +57,6 @@ class MountainBerryFields
 
     def tests
       @tests ||= []
-    end
-
-    def test(name, options={}, &block)
-      test = Commands::Test.new(name, options.merge(code: block.call))
-      strategy = Commands::Test::Strategy.for(test.strategy).new(test.code)
-      unless strategy.pass?
-        @failing_strategy = strategy
-        @failing_test     = test
-      end
-      tests << test
     end
 
     def document
