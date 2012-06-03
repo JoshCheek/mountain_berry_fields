@@ -17,8 +17,14 @@ describe test_class::MagicComments do
     described_class.new("1").pass?.should == true
   end
 
+  it 'ignores differences that look like object inspections' do
+    described_class.new("Object.new # => #<Object:0x007f9ef108b578>").pass?.should == true
+    described_class.new("Object.new # => #<NotObject:0x007f9ef108b578>").pass?.should == false
+    described_class.new("Class.new.new # => #<#<Class:0x007fc6d388b548>:0x007fc6d388b4f8>").pass?.should == true
+  end
+
   describe '#failure_message' do
-    it 'identifies the first different line' do
+    it 'identifies the first output line that differs from the input' do
       magic_comments = described_class.new <<-CODE.gsub(/^\s*/, '')
         1 + 2     # => 3
         "a" + "b" # => "ba"
@@ -46,12 +52,6 @@ describe test_class::MagicComments do
       magic_comments = described_class.new("puts 1\n# >> 1\n# >> 2\n")
       magic_comments.pass?
       magic_comments.failure_message.should == "Input had extra line: # >> 2\n"
-    end
-
-    it 'ignores differences that look like object inspections' do
-      described_class.new("Object.new # => #<Object:0x007f9ef108b578>").pass?.should == true
-      described_class.new("Object.new # => #<NotObject:0x007f9ef108b578>").pass?.should == false
-      described_class.new("Class.new.new # => #<#<Class:0x007fc6d388b548>:0x007fc6d388b4f8>").pass?.should == true
     end
   end
 end

@@ -22,6 +22,7 @@ Feature: Using the :magic_comments strategy
     More shit here
     """
 
+
   Scenario: Failing magic comments
     Given the file "Readme.mountain_berry_fields.md"
     """
