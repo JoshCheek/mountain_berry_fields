@@ -97,17 +97,15 @@ module MountainBerryFields::Commands
     end
 
 
-    class XMPFilter
-      require 'rcodetools/xmpfilter'
-      include Rcodetools
-
-      Strategy.register :xmpfilter, self
+    class MagicComments
       Strategy.register :magic_comments, self
 
       include Strategy
 
       def result
-        @result ||= Rcodetools::XMPFilter.run(code_to_test,
+        @result ||= begin
+                      require 'rcodetools/xmpfilter'
+                      Rcodetools::XMPFilter.run(code_to_test,
                         :interpreter => "ruby",
                         :options => [],
                         :min_codeline_size => 50,
@@ -127,6 +125,7 @@ module MountainBerryFields::Commands
                         :detect_rbtest => false,
                         :execute_ruby_tmpfile => false
                       ).join
+                    end
       end
 
       def pass?

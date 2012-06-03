@@ -1,11 +1,11 @@
-Feature: Integrate with xmpfilter
+Feature: Using the :magic_comments strategy
 
-  Scenario: Passing xmpfilter
+  Scenario: Passing magic comments
     Given the file "Readme.mountain_berry_fields.md"
     """
     # Whatever
 
-        <% test 'basic addition', strategy: :xmpfilter do %>
+        <% test 'basic addition', strategy: :magic_comments do %>
         1 + 1 # => 2
         <% end %>
 
@@ -22,12 +22,12 @@ Feature: Integrate with xmpfilter
     More shit here
     """
 
-  Scenario: Failing xmpfilter
+  Scenario: Failing magic comments
     Given the file "Readme.mountain_berry_fields.md"
     """
     # Whatever
 
-        <% test 'basic addition', strategy: :xmpfilter do %>
+        <% test 'basic addition', strategy: :magic_comments do %>
         1 + 2 # => 12
         <% end %>
 

@@ -2,11 +2,7 @@ require 'spec_helper'
 
 test_class = MountainBerryFields::Commands::Test
 
-describe test_class::XMPFilter do
-  it 'is registered it the strategy list under :xmpfilter' do
-    test_class::Strategy.for(:xmpfilter).should == described_class
-  end
-
+describe test_class::MagicComments do
   it 'is registered it the strategy list under :magic_comments' do
     test_class::Strategy.for(:magic_comments).should == described_class
   end
@@ -23,33 +19,33 @@ describe test_class::XMPFilter do
 
   describe '#failure_message' do
     it 'identifies the first different line' do
-      xmpfilter = described_class.new <<-CODE.gsub(/^\s*/, '')
+      magic_comments = described_class.new <<-CODE.gsub(/^\s*/, '')
         1 + 2     # => 3
         "a" + "b" # => "ba"
         5 + 6     # => 345678
       CODE
-      xmpfilter.pass?
-      xmpfilter.failure_message.should == %Q(Expected: "a" + "b" # => "ba"\n) +
-                                          %Q(Actual:   "a" + "b" # => "ab"\n)
+      magic_comments.pass?
+      magic_comments.failure_message.should == %Q(Expected: "a" + "b" # => "ba"\n) +
+                                               %Q(Actual:   "a" + "b" # => "ab"\n)
     end
 
     it 'strips leading white spaces off of failures' do
-      xmpfilter = described_class.new("    \t\t   1 + 1 # => 4")
-      xmpfilter.pass?
-      xmpfilter.failure_message.should == %Q(Expected: 1 + 1 # => 4\n) +
-                                          %Q(Actual:   1 + 1 # => 2\n)
+      magic_comments = described_class.new("    \t\t   1 + 1 # => 4")
+      magic_comments.pass?
+      magic_comments.failure_message.should == %Q(Expected: 1 + 1 # => 4\n) +
+                                               %Q(Actual:   1 + 1 # => 2\n)
     end
 
     it 'identifies missing output' do
-      xmpfilter = described_class.new("puts 1\nputs 2\n")
-      xmpfilter.pass?
-      xmpfilter.failure_message.should == "Output had extra line: # >> 1\n"
+      magic_comments = described_class.new("puts 1\nputs 2\n")
+      magic_comments.pass?
+      magic_comments.failure_message.should == "Output had extra line: # >> 1\n"
     end
 
     it 'identifies missing input' do
-      xmpfilter = described_class.new("puts 1\n# >> 1\n# >> 2\n")
-      xmpfilter.pass?
-      xmpfilter.failure_message.should == "Input had extra line: # >> 2\n"
+      magic_comments = described_class.new("puts 1\n# >> 1\n# >> 2\n")
+      magic_comments.pass?
+      magic_comments.failure_message.should == "Input had extra line: # >> 2\n"
     end
 
     it 'ignores differences that look like object inspections' do
