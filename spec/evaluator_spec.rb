@@ -49,13 +49,13 @@ describe MountainBerryFields::Evaluator do
 
     it 'returns true if all its tests pass' do
       evaluator = described_class.new ''
-      evaluator.test('Passing test', strategy: :always_pass) {''}
+      evaluator.test('Passing test', with: :always_pass) {''}
       evaluator.tests_pass?.should == true
     end
 
     it 'tracks the failure name and message, if any of its tests fail' do
       evaluator = described_class.new ''
-      evaluator.test('Failbert', strategy: :always_fail) {}
+      evaluator.test('Failbert', with: :always_fail) {}
       evaluator.tests_pass?.should == false
       evaluator.failure_name.should == 'Failbert'
       evaluator.failure_message.should == MountainBerryFields::Commands::Test::Strategy.for(:always_fail).new('').failure_message
@@ -77,7 +77,7 @@ describe MountainBerryFields::Evaluator do
     end
 
     it 'adds a test with the given name, and options' do
-      options   = { code: 'some code', strategy: :always_fail }
+      options   = { code: 'some code', with: :always_fail }
       evaluator = described_class.new ''
       evaluator.tests.size.should == 0
       evaluator.test('some name', options) { '' }
@@ -88,7 +88,7 @@ describe MountainBerryFields::Evaluator do
 
     it 'immediately evaluates the test' do
       $abc = ''
-      evaluator.test 'whatev', strategy: :always_pass do
+      evaluator.test 'whatev', with: :always_pass do
         '$abc = "abc"'
       end
       $abc.should == 'abc'

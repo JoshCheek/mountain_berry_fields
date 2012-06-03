@@ -9,7 +9,7 @@ module MountainBerryFields::Commands
     end
 
     def strategy
-      options[:strategy]
+      options[:with]
     end
 
     def code
@@ -31,7 +31,7 @@ module MountainBerryFields::Commands
 
       def self.for(name)
         @registered.fetch name do
-          raise NameError, "#{name.inspect} is not a registered strategy, should have been in #{@registered.inspect}"
+          raise NameError, "#{name.inspect} is not a registered strategy, should have been in #{@registered.keys.inspect}"
         end
       end
 

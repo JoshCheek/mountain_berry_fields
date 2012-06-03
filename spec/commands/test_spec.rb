@@ -5,7 +5,7 @@ module MountainBerryFields::Commands
     let(:name)          { 'Some name' }
     let(:code)          { 'Some code' }
     let(:strategy_name) { :always_pass }
-    let(:test)          { described_class.new name, code: code, strategy: strategy_name }
+    let(:test)          { described_class.new name, code: code, with: strategy_name }
 
     context 'the :strategy option' do
       it 'tells it the name of its strategy' do

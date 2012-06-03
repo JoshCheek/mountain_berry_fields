@@ -5,7 +5,7 @@ Feature: Using the :magic_comments strategy
     """
     # Whatever
 
-        <% test 'basic addition', strategy: :magic_comments do %>
+        <% test 'basic addition', with: :magic_comments do %>
         1 + 1 # => 2
         <% end %>
 
@@ -27,7 +27,7 @@ Feature: Using the :magic_comments strategy
     """
     # Whatever
 
-        <% test 'basic addition', strategy: :magic_comments do %>
+        <% test 'basic addition', with: :magic_comments do %>
         1 + 2 # => 12
         <% end %>
 
