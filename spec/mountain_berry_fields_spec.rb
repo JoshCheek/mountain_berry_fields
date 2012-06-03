@@ -8,8 +8,8 @@ describe MountainBerryFields do
   let(:parser)      { mbf.parser }
 
   shared_examples 'a failure' do
-    it 'returns exit status 1' do
-      mbf.execute.should == 1
+    it 'returns false' do
+      mbf.execute.should == false
     end
 
     it 'does not write any files' do
@@ -32,7 +32,7 @@ describe MountainBerryFields do
 
 
   context 'when the input file does not exist' do
-    nonexistent_filename = '/some/bullshit/file.md.testable_readme'.freeze
+    nonexistent_filename = '/some/bullshit/file.mountain_berry_fields.md'.freeze
     nonexistence_message = "#{nonexistent_filename.inspect} does not exist.".freeze
 
     let(:mbf) { described_class.new [nonexistent_filename] }
@@ -48,9 +48,9 @@ describe MountainBerryFields do
   end
 
 
-  context 'when the input file does not have a suffix of .testable_readme' do
+  context 'when the input file does not match /\.mountain_berry_fields\b/' do
     invalid_filename         = "invalid_filename.md"
-    invalid_filename_message = "#{invalid_filename.inspect} does not end in .testable_readme"
+    invalid_filename_message = "#{invalid_filename.inspect} does not match /\\.mountain_berry_fields\\b/"
     let(:mbf) { described_class.new [invalid_filename] }
 
     it "declares the error '#{invalid_filename_message}'" do
@@ -60,7 +60,7 @@ describe MountainBerryFields do
   end
 
   context 'when unsuccessfully parsing a file' do
-    let(:input_filename)   { 'some_invalid_file.md.testable_readme' }
+    let(:input_filename)   { 'some_invalid_file.mountain_berry_fields.md' }
     let(:mbf)    { described_class.new [input_filename] }
     before { parser.will_parse StandardError.new "some error message" }
 
@@ -73,7 +73,7 @@ describe MountainBerryFields do
   end
 
   context 'when successfully parsing a file' do
-    let(:input_filename)     { 'some_valid_file.md.testable_readme' }
+    let(:input_filename)     { 'some_valid_file.mountain_berry_fields.md' }
     let(:output_filename)    { 'some_valid_file.md' }
     let(:mbf)                { described_class.new [input_filename] }
     let(:file_body)          { 'SOME FILE BODY' }
@@ -106,11 +106,11 @@ describe MountainBerryFields do
       before { evaluator.will_tests_pass? true }
       before { evaluator.will_have_document document }
 
-      it 'returns exit status 0' do
-        mbf.execute.should == 0
+      it 'returns true' do
+        mbf.execute.should == true
       end
 
-      it 'writes the interpreted file to the new filename (the same name, but with .testable_readme removed)' do
+      it 'writes the interpreted file to the new filename (the same name, but with mountain_berry_fields segment removed)' do
         mbf.execute
         file_class.should have_been_told_to(:write).with(output_filename, document)
       end

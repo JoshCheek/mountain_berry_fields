@@ -13,15 +13,13 @@ class MountainBerryFields
   dependency(:parser_class)    { Parser }
   dependency(:file_class)      { File }
 
-  SUCCESS_STATUS = 0
-  FAILURE_STATUS = 1
-
   def initialize(argv)
     self.argv = argv
   end
 
   def execute
-    missing_input_file || invalid_filename || nonexistent_file || execute!
+    return false if missing_input_file? || invalid_filename? || nonexistent_file?
+    execute!
   end
 
   def evaluator
@@ -36,36 +34,36 @@ class MountainBerryFields
 
 private
 
-  def missing_input_file
+  def missing_input_file?
     return if filename
     interaction.declare_failure 'Please provide an input file'
-    FAILURE_STATUS
+    true
   end
 
-  def invalid_filename
-    return if filename =~ suffix_regex
-    interaction.declare_failure "#{filename.inspect} does not end in .testable_readme"
-    FAILURE_STATUS
+  def invalid_filename?
+    return if filename =~ filename_regex
+    interaction.declare_failure "#{filename.inspect} does not match #{filename_regex.inspect}"
+    true
   end
 
-  def nonexistent_file
+  def nonexistent_file?
     return if file_class.exist? filename
     interaction.declare_failure "#{File.expand_path(filename).inspect} does not exist."
-    FAILURE_STATUS
+    true
   end
 
   def execute!
     begin
       if evaluator.tests_pass?
         file_class.write output_filename_for(filename), evaluator.document
-        SUCCESS_STATUS
+        true
       else
         interaction.declare_failure "FAILURE: #{evaluator.failure_name}\n#{evaluator.failure_message}"
-        FAILURE_STATUS
+        false
       end
     rescue StandardError
       interaction.declare_failure "#{$!.class} #{$!.message}"
-      FAILURE_STATUS
+      false
     end
   end
 
@@ -74,11 +72,11 @@ private
   end
 
   def output_filename_for(filename)
-    filename.sub suffix_regex, ''
+    filename.sub filename_regex, ''
   end
 
-  def suffix_regex
-    /\.testable_readme$/
+  def filename_regex
+    /\.mountain_berry_fields\b/
   end
 
   attr_accessor :argv

@@ -5,7 +5,7 @@ class MountainBerryFields
   # This class evaluates a block of code that was emitted from the parser.
   # It has a document that the evalutable code can append to.
   # It implements the visible and invisible methods (see the parser for more on these)
-  # that ReadmeTester supports.
+  # that MountainBerryFields supports.
   #
   # It also evaluates tests, and tracks whether they pass or fail (currently only tracking the last failure)
   class Evaluator

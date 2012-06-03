@@ -1,7 +1,7 @@
 Feature: Integrate with xmpfilter
 
   Scenario: Passing xmpfilter
-    Given the file "Readme.md.testable_readme"
+    Given the file "Readme.mountain_berry_fields.md"
     """
     # Whatever
 
@@ -11,7 +11,7 @@ Feature: Integrate with xmpfilter
 
     More shit here
     """
-    When I run "mountain_berry_fields Readme.md.testable_readme"
+    When I run "mountain_berry_fields Readme.mountain_berry_fields.md"
     Then it exits with a status of 0
     Then I see the file "Readme.md"
     """
@@ -23,7 +23,7 @@ Feature: Integrate with xmpfilter
     """
 
   Scenario: Failing xmpfilter
-    Given the file "Readme.md.testable_readme"
+    Given the file "Readme.mountain_berry_fields.md"
     """
     # Whatever
 
@@ -33,7 +33,7 @@ Feature: Integrate with xmpfilter
 
     More shit here
     """
-    When I run "mountain_berry_fields Readme.md.testable_readme"
+    When I run "mountain_berry_fields Readme.mountain_berry_fields.md"
     Then it exits with a status of 1, and a stderr of
     """
     FAILURE: basic addition
