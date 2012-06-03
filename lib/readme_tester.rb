@@ -4,11 +4,6 @@ require 'readme_tester/version'
 require 'readme_tester/evaluator'
 require 'readme_tester/parser'
 
-def ReadmeTester(argv)
-  ReadmeTester.new(argv).execute
-end
-
-
 # Ties everything together. It gets the file, passes it to the parser,
 # passes the result to the evaluator, and writes the file. If anything
 # goes wrong along the way, it declares the failure to the interaction,

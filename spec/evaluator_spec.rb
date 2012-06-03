@@ -62,6 +62,15 @@ describe ReadmeTester::Evaluator do
     end
   end
 
+  describe 'visible and invisble commands' do
+    specify '#visible_commands is an array of commands whose output should be displayed' do
+      described_class.visible_commands.should be_a_kind_of Array
+    end
+
+    specify '#invisible_commands is an array of commands whose output should be omitted from the final document' do
+      described_class.invisible_commands.should be_a_kind_of Array
+    end
+  end
   describe '#test' do
     it 'is visible' do
       described_class.visible_commands.should include :test

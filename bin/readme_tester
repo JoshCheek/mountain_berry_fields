@@ -1,17 +1,9 @@
 #!/usr/bin/env ruby
 
-# enable end-to-end testing via cucumber to still generate accurate coverage reports
-if ENV['YO_IM_TESTING_README_SHIT_RIGHT_NOW'] == 'FOR_REALSIES'
-  Dir.chdir File.dirname File.dirname __FILE__ do
-    require 'simplecov'
-    SimpleCov.command_name "Full Stack (executed from binary)"
-  end
-end
-
 $LOAD_PATH.unshift File.expand_path('../../lib/', __FILE__)
 
 require 'readme_tester'
 require 'readme_tester/command_line_interaction'
 ReadmeTester.override(:interaction) { ReadmeTester::CommandLineInteraction.new }
 
-exit ReadmeTester ARGV
+exit ReadmeTester.new(ARGV).execute
