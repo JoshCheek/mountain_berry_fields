@@ -5,11 +5,8 @@ Tests code in readme files, generates the readme if they are successful.
 ## TODO
 
 * uh... make this a real readme
-* rename to mountain berry fields
-* should readme_tester shouldn't talk directly to file interface? Or should it be more abstract?
-* readme_tester returning 1 and 0 is lame, make it less "I'm a command line app on Unix" by returning true/false
 * erb shouldn't render the fuckign code in a visible block, there should just be commands, they should always be invisible Then the evaluator can decide what it wants to make visible and invisible by appending to the document
-* add support for real tests (xmpfilter and rspec)
+* add support for real tests (rspec)
 * add support for contexts
 * add support for file rendering and line numbers
 * rename strategy to something not so fucking snooty
