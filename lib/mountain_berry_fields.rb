@@ -12,9 +12,11 @@ class MountainBerryFields
   dependency(:evaluator_class) { Evaluator }
   dependency(:parser_class)    { Parser }
   dependency(:file_class)      { File }
+  dependency(:dir_class)       { Dir }
 
   def initialize(argv)
     self.argv = argv
+    self.full_filename = File.expand_path filename if filename
   end
 
   def execute
@@ -27,7 +29,7 @@ class MountainBerryFields
   end
 
   def parser
-    @parser ||= parser_class.new  file_class.read(filename),
+    @parser ||= parser_class.new  file_class.read(full_filename),
                                   visible:   evaluator_class.visible_commands,
                                   invisible: evaluator_class.invisible_commands
   end
@@ -54,7 +56,7 @@ private
 
   def execute!
     begin
-      if evaluator.tests_pass?
+      if dir_class.chdir(dirname) { evaluator.tests_pass? }
         file_class.write output_filename_for(filename), evaluator.document
         true
       else
@@ -67,8 +69,14 @@ private
     end
   end
 
+  attr_accessor :argv, :full_filename
+
   def filename
     argv.first
+  end
+
+  def dirname
+    File.dirname filename
   end
 
   def output_filename_for(filename)
@@ -78,6 +86,4 @@ private
   def filename_regex
     /\.mountain_berry_fields\b/
   end
-
-  attr_accessor :argv
 end

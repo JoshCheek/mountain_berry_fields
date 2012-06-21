@@ -8,7 +8,7 @@ module ProvingGrounds
 
   def in_proving_grounds(&block)
     make_proving_grounds
-    FileUtils.cd proving_grounds_dir, &block
+    FileUtils.cd(proving_grounds_dir) { return block.call }
   end
 
   def make_proving_grounds
@@ -17,6 +17,10 @@ module ProvingGrounds
 
   def remove_proving_grounds
     FileUtils.rm_r proving_grounds_dir
+  end
+
+  def ensure_dir(dirname)
+    FileUtils.mkdir_p dirname
   end
 end
 

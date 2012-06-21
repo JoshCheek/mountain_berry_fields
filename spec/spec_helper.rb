@@ -15,6 +15,12 @@ module Mock
     end
   end
 
+  class Dir
+    Surrogate.endow self do
+      define(:chdir) { |dir, &block| block.call }
+    end
+  end
+
   class Interaction
     Surrogate.endow self
     define(:declare_failure) { }
@@ -51,6 +57,7 @@ module Mock
 end
 
 MountainBerryFields.override(:file_class)      { Mock::File.clone }
+MountainBerryFields.override(:dir_class)       { Mock::Dir.clone }
 MountainBerryFields.override(:interaction)     { Mock::Interaction.new }
 MountainBerryFields.override(:evaluator_class) { Mock::Evaluator.clone }
 MountainBerryFields.override(:parser_class)    { Mock::Parser.clone }

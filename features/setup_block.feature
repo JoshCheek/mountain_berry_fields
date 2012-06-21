@@ -10,13 +10,13 @@ Feature: Using a setup block
   relative to that directory.
 
   Scenario: setup blocks are evaluated before each test block
-    Given the file "addition_helpers.rb"
+    Given the file "addition_helpers.rb":
     """
     def plus_five(n)
       n + 5
     end
     """
-    And the file "example.mountain_berry_fields.md"
+    And the file "example.mountain_berry_fields.md":
     """
     <% setup do %>
     require "./addition_helpers"
@@ -28,7 +28,7 @@ Feature: Using a setup block
     """
     When I run "mountain_berry_fields example.mountain_berry_fields.md"
     Then it exits with a status of 0
-    And I see the file "example.md"
+    And I see the file "example.md":
     """
 
     plus_five 2 # => 7

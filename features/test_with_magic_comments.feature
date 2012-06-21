@@ -1,7 +1,7 @@
 Feature: Using the :magic_comments strategy
 
   Scenario: Passing magic comments
-    Given the file "Readme.mountain_berry_fields.md"
+    Given the file "Readme.mountain_berry_fields.md":
     """
     # Whatever
 
@@ -13,7 +13,7 @@ Feature: Using the :magic_comments strategy
     """
     When I run "mountain_berry_fields Readme.mountain_berry_fields.md"
     Then it exits with a status of 0
-    And I see the file "Readme.md"
+    And I see the file "Readme.md":
     """
     # Whatever
 
@@ -24,7 +24,7 @@ Feature: Using the :magic_comments strategy
 
 
   Scenario: Failing magic comments
-    Given the file "Readme.mountain_berry_fields.md"
+    Given the file "Readme.mountain_berry_fields.md":
     """
     # Whatever
 
@@ -35,7 +35,7 @@ Feature: Using the :magic_comments strategy
     More shit here
     """
     When I run "mountain_berry_fields Readme.mountain_berry_fields.md"
-    Then it exits with a status of 1, and a stderr of
+    Then it exits with a status of 1, and a stderr of:
     """
     FAILURE: basic addition
     Expected: 1 + 2 # => 12

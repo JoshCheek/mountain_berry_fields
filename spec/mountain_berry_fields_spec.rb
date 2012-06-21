@@ -1,6 +1,7 @@
 require 'spec_helper'
 
 describe MountainBerryFields do
+  let(:dir_class)   { mbf.dir_class }
   let(:file_class)  { mbf.file_class }
   let(:stderr)      { mbf.stderr.string }
   let(:interaction) { mbf.interaction }
@@ -73,8 +74,9 @@ describe MountainBerryFields do
   end
 
   context 'when successfully parsing a file' do
-    let(:input_filename)     { 'some_valid_file.mountain_berry_fields.md' }
-    let(:output_filename)    { 'some_valid_file.md' }
+    let(:input_filepath)     { '/a/b/c' }
+    let(:input_filename)     { input_filepath + '/some_valid_file.mountain_berry_fields.md' }
+    let(:output_filename)    { input_filepath + '/some_valid_file.md' }
     let(:mbf)                { described_class.new [input_filename] }
     let(:file_body)          { 'SOME FILE BODY' }
     let(:parsed_body)        { 'PARSED BODY' }
@@ -92,12 +94,17 @@ describe MountainBerryFields do
       visible_commands = mbf.evaluator_class.visible_commands
       invisible_commands = mbf.evaluator_class.invisible_commands
       mbf.execute
-      file_class.should have_been_told_to(:read).with(input_filename)
+      file_class.should have_been_told_to(:read).with(/#{input_filename}$/)
       parser.should have_been_initialized_with file_body, visible: visible_commands, invisible: invisible_commands
     end
 
-    it 'evaluates the results of the parsing' do
+    it "evaluates the results of the parsing, in the input file's directory" do
+      dir_class.will_chdir false
       mbf.execute
+      dir_class.should have_been_told_to(:chdir).with(input_filepath) { |block|
+        block.before { evaluator.should_not have_been_asked_if :tests_pass? }
+        block.after  { evaluator.should     have_been_asked_if :tests_pass? }
+      }
       evaluator.should have_been_initialized_with parsed_body
     end
 
