@@ -5,7 +5,6 @@ Tests code in readme files, generates the readme if they are successful.
 ## TODO
 
 * uh... make this a real readme
-* erb shouldn't render the fuckign code in a visible block, there should just be commands, they should always be invisible Then the evaluator can decide what it wants to make visible and invisible by appending to the document
 * add support for real tests (rspec)
 * add support for contexts
 * add support for file rendering and line numbers
