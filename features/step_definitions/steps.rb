@@ -18,6 +18,10 @@ Then /^it exits with a status of (\d+), and a stderr of:$/ do |status, stderr|
   last_cmdline.stderr.chomp.should == interpret_curlies(stderr).chomp
 end
 
+Then /^it prints nothing to (stdout|stderr)$/ do |descriptor|
+  last_cmdline.send(descriptor).should == ''
+end
+
 Then 'I see the file "$filename"' do |filename|
   in_proving_grounds { File.exist?(filename).should be_true }
 end
@@ -31,7 +35,7 @@ Then 'I see the file "$filename":' do |filename, body|
   end
 end
 
-And 'I do not see the file "$filename"' do |filename|
+Then 'I do not see the file "$filename"' do |filename|
   in_proving_grounds { File.exist?(filename).should be_false }
 end
 
@@ -39,3 +43,4 @@ And 'I pry' do
   require 'pry'
   binding.pry
 end
+

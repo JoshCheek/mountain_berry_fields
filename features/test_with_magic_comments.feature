@@ -1,4 +1,4 @@
-Feature: Using the :magic_comments strategy
+Feature: Testing with :magic_comments
 
   Scenario: Passing magic comments
     Given the file "Readme.mountain_berry_fields.md":
