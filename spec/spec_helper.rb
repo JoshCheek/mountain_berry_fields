@@ -17,7 +17,32 @@ module Mock
 
   class Dir
     Surrogate.endow self do
-      define(:chdir) { |dir, &block| block.call }
+      define(:chdir)    { |dir,    &block| block.call }
+      define(:mktmpdir) { |prefix, &block| block.call }
+    end
+  end
+
+  module Process
+    class ExitStatus
+      Surrogate.endow self
+      define(:success?) { true }
+    end
+  end
+
+  class Open3
+    Surrogate.endow self do
+      define(:capture3) { |invocation| ["stdout", "stderr", @exitstatus||Process::ExitStatus.new] }
+    end
+
+
+    def self.exit_with_failure!
+      @exitstatus = Process::ExitStatus.new.will_have_success? false
+      self
+    end
+
+    def self.exit_with_success!
+      @exitstatus = Process::ExitStatus.new.will_have_success? true
+      self
     end
   end
 

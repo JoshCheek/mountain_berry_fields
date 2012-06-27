@@ -9,6 +9,7 @@ Tests code in readme files, generates the readme if they are successful.
 * add support for contexts
 * add support for file rendering and line numbers
 * rename strategy to something not so fucking snooty
+* should be able to access strategies by symbol or string
 
 ## Installation
 

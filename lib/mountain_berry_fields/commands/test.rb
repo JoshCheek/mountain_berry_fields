@@ -63,7 +63,67 @@ module MountainBerryFields::Commands
     end
 
 
-      # Ask it if it passes
+    require 'open3'
+    require 'json'
+    require 'tmpdir'
+    require 'mountain_berry_fields/commands/test/strategy/rspec/formatter'
+    class RSpec
+      Deject self
+      dependency(:file_class)  { File }
+      dependency(:dir_class)   { Dir }
+      dependency(:open3_class) { Open3 }
+
+      Strategy.register :rspec, self
+
+      include Strategy
+
+      def pass?
+        @passed ||= begin
+          dir_class.mktmpdir 'mountain_berry_fields_rspec' do |dir|
+            @tempdir_name = dir
+            file_class.write "#{dir}/spec.rb", @code_to_test
+            @output, @error, status = open3_class.capture3 "rspec '#{dir}/spec.rb' " \
+                                                           "-r '#{formatter_filename}' " \
+                                                           "-f MountainBerryFields::Commands::Test::Strategy::RSpec::Formatter " \
+                                                           "--fail-fast"
+            status.success?
+          end
+        end
+      end
+
+      def failure_message
+        "#{spec_failure_description.chomp}:\n"  \
+        "  #{spec_failure_message.chomp}\n"     \
+        "\n"                                    \
+        "backtrace:\n"                        \
+        "  #{spec_failure_backtrace.join "\n  "}\n"
+      end
+
+      private
+
+      def spec_failure_description
+        result['full_description']
+      end
+
+      def spec_failure_message
+        result['message']
+      end
+
+      def spec_failure_backtrace
+        result['backtrace'].map { |line| line.gsub @tempdir_name, '' }
+      end
+
+      def result
+        @result ||= JSON.parse @output
+      end
+
+      def formatter_filename
+        File.expand_path "../test/strategy/rspec/formatter.rb", __FILE__
+      end
+    end
+
+
+    # Ask it if it passes
     #
     # (it does)
     class AlwaysPass

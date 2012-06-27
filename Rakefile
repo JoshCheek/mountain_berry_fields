@@ -16,6 +16,7 @@ Cucumber::Rake::Task.new('cucumber:wip') { |t| t.cucumber_opts = default_cucumbe
 
 task rspec_must_be_100_percent: :rspec do
   percent = SimpleCov.result.covered_percent
+  # need to fix this to still write results even though it fails
   fail "\e[31mYo, dawg some of your shit isn't getting tested, only %0.2f%%\e[0m" % percent unless percent == 100
 end
 
