@@ -1,4 +1,3 @@
-@wip
 Feature: Mountain Berry Fields provides a rake task
 
   To automate usage, users may wish to add Mountain Berry Fields
@@ -14,7 +13,7 @@ Feature: Mountain Berry Fields provides a rake task
     """
     Use it like this:
 
-    <% test 'example', with: :always_pass %>
+    <% test 'example', with: :always_pass do %>
     the code
     <% end %>
     """
@@ -32,19 +31,16 @@ Feature: Mountain Berry Fields provides a rake task
     Given the file "Rakefile":
     """
     require 'mountain_berry_fields/rake_task'
-    MountainBerryFields::RakeTask.new(:mbf, 'Readme.mountain_berry_fields.md')
+    MountainBerryFields::RakeTask.new(:mountains, 'Readme.mountain_berry_fields.md')
     """
     And the file "Readme.mountain_berry_fields.md":
     """
     Use it like this:
 
-    <% test 'example', with: :always_fail %>
+    <% test 'example', with: :always_fail do %>
     the code
     <% end %>
     """
-    When I run "rake mbf"
-    Then it exits with a status of 1, and a stderr of:
-    """
-    uhhh... I forgot what always_fail outputs
-    """
+    When I run "rake mountains"
+    Then it exits with a status of 1
     And I do not see the file "Readme.md"
