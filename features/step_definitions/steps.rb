@@ -28,7 +28,7 @@ end
 
 Then 'I see the file "$filename":' do |filename, body|
   in_proving_grounds do
-    File.exist?(filename).should be_true
+    File.exist?(filename).should be_true, "#{filename} doesn't exist"
 
     body && strip_trailing_whitespace(File.read(filename)).should ==
             strip_trailing_whitespace(body)
