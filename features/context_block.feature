@@ -71,6 +71,3 @@ Feature: Using a context block
       /spec.rb:4:in `block (2 levels) in <top (required)>'
     """
     And I do not see the file "example.md"
-
-  # Scenario: Contexts can have contexts
-  # Scenario: Setups, contexts, and tests all in one (zomg!)

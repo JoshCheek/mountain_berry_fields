@@ -155,5 +155,16 @@ describe MountainBerryFields::Evaluator do
       evaluator.test(test_name, context: context_name, with: :always_pass) { 'c' }
       evaluator.tests.first.code.should == 'a b c'
     end
+
+    let(:context_name1) { 'context name 1' }
+    let(:context_name2) { 'context name 2' }
+    specify 'contexts can have contexts of their own' do
+      evaluator.context(context_name1) { 'a __CODE__ b' }
+      evaluator.context(context_name2, context: context_name1) { 'c __CODE__ d' }
+      evaluator.test(test_name, context: context_name1, with: :always_pass) { 'e' }
+      evaluator.test(test_name, context: context_name2, with: :always_pass) { 'f' }
+      evaluator.tests[0].code.should == 'a e b'
+      evaluator.tests[1].code.should == 'a c f d b'
+    end
   end
 end

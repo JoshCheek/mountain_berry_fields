@@ -27,8 +27,8 @@ class MountainBerryFields
       setup_code << yield
     end
 
-    def context(context_name, &block)
-      contexts[context_name] = block.call
+    def context(context_name, options={}, &block)
+      contexts[context_name] = in_context options[:context], block.call
       return if contexts[context_name]['__CODE__']
       raise ArgumentError, "Context #{context_name.inspect} does not have a __CODE__ block"
     end
