@@ -6,7 +6,6 @@ Tests code in readme files, generates the readme if they are successful.
 
 * uh... make this a real readme
 * add support for file rendering and line numbers
-* should be able to access strategies by symbol or string
 * add rake task
 * release as gem
 * extract magic_comments and rspec out into their own gems

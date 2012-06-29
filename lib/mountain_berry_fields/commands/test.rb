@@ -30,21 +30,21 @@ module MountainBerryFields::Commands
       @registered = {}
 
       def self.for(name)
-        @registered.fetch name do
+        @registered.fetch name.to_s do
           raise NameError, "#{name.inspect} is not a registered strategy, should have been in #{@registered.keys.inspect}"
         end
       end
 
       def self.register(name, strategy)
-        @registered[name] = strategy
+        @registered[name.to_s] = strategy
       end
 
       def self.unregister(name)
-        @registered.delete name
+        @registered.delete name.to_s
       end
 
       def self.registered?(name)
-        @registered.has_key? name
+        @registered.has_key? name.to_s
       end
 
       attr_reader :code_to_test

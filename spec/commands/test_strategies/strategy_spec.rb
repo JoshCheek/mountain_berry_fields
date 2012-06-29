@@ -8,21 +8,23 @@ describe described_class do
   end
 
   let(:strategy) { 'some strategy' }
+  before { described_class.unregister :abc }
 
   describe 'registration' do
     specify 'a strategy can register itself with the .register method' do
       described_class.register :abc, strategy
       described_class.should be_registered :abc
+      described_class.should be_registered 'abc'
     end
 
     specify 'a strategy can unregister itself with the .unregister method' do
       described_class.register :abc, strategy
-      described_class.unregister :abc
+      described_class.unregister 'abc'
       expect { described_class.for :abc }.to raise_error NameError, /abc/
     end
 
     specify 'a strategy can be retrieved with the .for method' do
-      described_class.register :abc, strategy
+      described_class.register 'abc', strategy
       described_class.for(:abc).should == strategy
     end
   end
