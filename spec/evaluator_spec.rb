@@ -120,4 +120,40 @@ describe MountainBerryFields::Evaluator do
       evaluator.tests.first.code.should == "setup1\nsetup2\ntest1\n"
     end
   end
+
+
+  describe '#context' do
+    let(:context_name) { 'some context name' }
+    let(:test_name)    { 'some test name' }
+
+    it 'is invisible' do
+      described_class.invisible_commands.should include :context
+    end
+
+    it 'must have at least one __CODE__ section in it' do
+      expect {
+        evaluator.context(context_name) { 'no code section' }
+      }.to raise_error ArgumentError, /#{context_name}.*__CODE__/
+    end
+
+    it 'replaces all __CODE__ section with the test using it' do
+      evaluator.context(context_name) { 'a __CODE__ c __CODE__' }
+      evaluator.test(test_name, with: :always_pass, context: context_name) { 'b' }
+      evaluator.tests.first.code.should == 'a b c b'
+    end
+
+    it 'raises an error when a test references a nonexistent context' do
+      evaluator.context(context_name) { '__CODE__' }
+      expect {
+        evaluator.test(test_name, with: :always_pass, context: context_name.reverse) {''}
+      }.to raise_error NameError, /#{context_name.reverse}.*#{context_name}/
+    end
+
+    it 'is applied after setup' do
+      evaluator.setup { 'a' }
+      evaluator.context(context_name) { ' b __CODE__' }
+      evaluator.test(test_name, context: context_name, with: :always_pass) { 'c' }
+      evaluator.tests.first.code.should == 'a b c'
+    end
+  end
 end

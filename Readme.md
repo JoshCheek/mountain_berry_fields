@@ -5,11 +5,11 @@ Tests code in readme files, generates the readme if they are successful.
 ## TODO
 
 * uh... make this a real readme
-* add support for real tests (rspec)
-* add support for contexts
 * add support for file rendering and line numbers
-* rename strategy to something not so fucking snooty
 * should be able to access strategies by symbol or string
+* add rake task
+* release as gem
+* extract magic_comments and rspec out into their own gems
 
 ## Installation
 

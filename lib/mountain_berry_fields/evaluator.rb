@@ -20,11 +20,21 @@ class MountainBerryFields
     end
 
     def self.invisible_commands
-      [:setup]
+      [:setup, :context]
     end
 
     def setup
       setup_code << yield
+    end
+
+    def context(context_name, &block)
+      contexts[context_name] = block.call
+      return if contexts[context_name]['__CODE__']
+      raise ArgumentError, "Context #{context_name.inspect} does not have a __CODE__ block"
+    end
+
+    def contexts
+      @contexts ||= Hash.new
     end
 
     def setup_code
@@ -32,7 +42,7 @@ class MountainBerryFields
     end
 
     def test(name, options={}, &block)
-      code = setup_code + block.call.to_s
+      code = setup_code + in_context(options[:context], block.call.to_s)
       test = Commands::Test.new(name, options.merge(code: code))
       strategy = Commands::Test::Strategy.for(test.strategy).new(test.code)
       unless strategy.pass?
@@ -40,6 +50,13 @@ class MountainBerryFields
         @failing_test     = test
       end
       tests << test
+    end
+
+
+    def in_context(context_name, code)
+      return code unless context_name
+      return contexts[context_name].gsub '__CODE__', code if contexts[context_name]
+      raise NameError, "There is no context #{context_name.inspect}, only #{contexts.keys.inspect}"
     end
 
     def tests_pass?

@@ -1,4 +1,3 @@
-@wip
 Feature: Using a context block
 
   Sometimes there is necessary code around what the user wants to show.
@@ -65,10 +64,11 @@ Feature: Using a context block
     """
     FAILURE: Users know their names
     User does usery things:
-      should == 'Not Josh'
+      expected: "Not Josh"
+         got: "Josh" (using ==)
 
     backtrace:
-      /spec.rb:4:?????????????
+      /spec.rb:4:in `block (2 levels) in <top (required)>'
     """
     And I do not see the file "example.md"
 
