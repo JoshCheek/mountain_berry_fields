@@ -5,7 +5,6 @@ Tests code in readme files, generates the readme if they are successful.
 ## TODO
 
 * uh... make this a real readme
-* add support for file rendering and line numbers
 * add rake task
 * release as gem
 * extract magic_comments and rspec out into their own gems
