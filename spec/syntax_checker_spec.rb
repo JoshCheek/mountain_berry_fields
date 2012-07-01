@@ -16,9 +16,12 @@ describe MountainBerryFields::Commands::Test::SyntaxChecker do
   end
 
   describe '#invalid_message' do
-    it 'returns whatever Ruby gave it on the command line' do
+    it 'returns whatever Ruby gave it on the command line, followed by the original file' do
       described_class.new("{").invalid_message.should ==
-        "-:1: syntax error, unexpected $end, expecting '}'\n"
+        "-:1: syntax error, unexpected $end, expecting '}'\n"\
+        "\n" \
+        "original file:\n" \
+        "{"
     end
   end
 end

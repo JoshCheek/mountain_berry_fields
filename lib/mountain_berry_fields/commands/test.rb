@@ -31,13 +31,13 @@ module MountainBerryFields::Commands
       def valid?
         return @valid if defined? @valid
         out, err, status = Open3.capture3 'ruby -c', stdin_data: @code_to_test
-        @invalid_message = err
+        @stderr = err
         @valid = status.exitstatus.zero?
       end
 
       def invalid_message
         valid?
-        @invalid_message
+        "#{@stderr.chomp}\n\noriginal file:\n#@code_to_test"
       end
     end
 

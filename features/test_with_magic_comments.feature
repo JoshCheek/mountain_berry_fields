@@ -62,5 +62,8 @@ Feature: Testing with :magic_comments
     -:1: syntax error, unexpected '}'
         } + { # => 12
          ^
+
+    original file:
+        } + { # => 12
     """
     And I do not see the file "Readme.md"

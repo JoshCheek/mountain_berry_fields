@@ -79,5 +79,10 @@ Feature: Testing with :rspec
     -:2: syntax error, unexpected '}', expecting keyword_end
           it('is invalid syntax') { }}}}
                                       ^
+
+    original file:
+        describe 'an example' do
+          it('is invalid syntax') { }}}}
+        end
     """
     And I do not see the file "Readme.md"
