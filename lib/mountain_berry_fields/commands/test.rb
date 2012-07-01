@@ -1,3 +1,5 @@
+require 'open3'
+
 module MountainBerryFields::Commands
 
   # Data structure to store the shit passed to the test method
@@ -19,6 +21,25 @@ module MountainBerryFields::Commands
 
 
   class Test
+
+    # checks syntax of a code example
+    class SyntaxChecker
+      def initialize(code_to_test)
+        @code_to_test = code_to_test
+      end
+
+      def valid?
+        return @valid if defined? @valid
+        out, err, status = Open3.capture3 'ruby -c', stdin_data: @code_to_test
+        @invalid_message = err
+        @valid = status.exitstatus.zero?
+      end
+
+      def invalid_message
+        valid?
+        @invalid_message
+      end
+    end
 
     # You want to run tests, amirite? So you need something that runs them.
     # Right now that's called a strategy (expect that to change). Strategies
@@ -63,22 +84,26 @@ module MountainBerryFields::Commands
     end
 
 
-    require 'open3'
     require 'json'
     require 'tmpdir'
     require 'mountain_berry_fields/commands/test/strategy/rspec/formatter'
     class RSpec
       Deject self
-      dependency(:file_class)  { File }
-      dependency(:dir_class)   { Dir }
-      dependency(:open3_class) { Open3 }
+      dependency(:file_class)           { File          }
+      dependency(:dir_class)            { Dir           }
+      dependency(:open3_class)          { Open3         }
+      dependency(:syntax_checker_class) { SyntaxChecker }
+
+      def syntax_checker
+        @syntax_checker ||= syntax_checker_class.new code_to_test
+      end
 
       Strategy.register :rspec, self
 
       include Strategy
 
       def pass?
-        @passed ||= begin
+        @passed ||= syntax_checker.valid? && begin
           dir_class.mktmpdir 'mountain_berry_fields_rspec' do |dir|
             @tempdir_name = dir
             file_class.write "#{dir}/spec.rb", @code_to_test
@@ -89,14 +114,21 @@ module MountainBerryFields::Commands
             status.success?
           end
         end
+        @passed
+      end
+
+      def syntax_error_message
+        return if syntax_checker.valid?
+        syntax_checker.invalid_message
       end
 
       def failure_message
-        "#{spec_failure_description.chomp}:\n"  \
-        "  #{spec_failure_message.chomp}\n"     \
-        "\n"                                    \
-        "backtrace:\n"                        \
-        "  #{spec_failure_backtrace.join "\n  "}\n"
+        syntax_error_message ||
+          "#{spec_failure_description.chomp}:\n"      \
+          "  #{spec_failure_message.chomp}\n"         \
+          "\n"                                        \
+          "backtrace:\n"                              \
+          "  #{spec_failure_backtrace.join "\n  "}\n"
       end
 
       private
@@ -157,35 +189,45 @@ module MountainBerryFields::Commands
     end
 
 
+    require 'rcodetools/xmpfilter'
     class MagicComments
       Strategy.register :magic_comments, self
-
       include Strategy
 
+      Deject self
+      dependency(:syntax_checker_class) { SyntaxChecker }
+
+      def syntax_checker
+        @syntax_checker ||= syntax_checker_class.new code_to_test
+      end
+
       def result
-        @result ||= begin
-                      require 'rcodetools/xmpfilter'
-                      Rcodetools::XMPFilter.run(code_to_test,
-                        :interpreter => "ruby",
-                        :options => [],
-                        :min_codeline_size => 50,
-                        :libs => [],
-                        :evals => [],
-                        :include_paths => [],
-                        :dump => nil,
-                        :wd => nil,
-                        :warnings => false,
-                        :use_parentheses => true,
-                        :column => nil,
-                        :output_stdout => true,
-                        :test_script => nil,
-                        :test_method => nil,
-                        :detect_rct_fork => false,
-                        :use_rbtest => false,
-                        :detect_rbtest => false,
-                        :execute_ruby_tmpfile => false
-                      ).join
-                    end
+        @result ||= Rcodetools::XMPFilter.run(
+          code_to_test,
+          :interpreter => "ruby",
+          :options => [],
+          :min_codeline_size => 50,
+          :libs => [],
+          :evals => [],
+          :include_paths => [],
+          :dump => nil,
+          :wd => nil,
+          :warnings => false,
+          :use_parentheses => true,
+          :column => nil,
+          :output_stdout => true,
+          :test_script => nil,
+          :test_method => nil,
+          :detect_rct_fork => false,
+          :use_rbtest => false,
+          :detect_rbtest => false,
+          :execute_ruby_tmpfile => false
+        ).join
+      end
+
+      def syntax_error_message
+        return if syntax_checker.valid?
+        syntax_checker.invalid_message
       end
 
       def pass?
@@ -196,12 +238,13 @@ module MountainBerryFields::Commands
       end
 
       def failure_message
-        each_line_pair do |expected_line, actual_line|
-          next if lines_match? expected_line, actual_line
-          return "Output had extra line: #{actual_line}\n" unless expected_line
-          return "Input had extra line: #{expected_line}\n" unless actual_line
-          return "Expected: #{expected_line.gsub /^\s+/, ''}\nActual:   #{actual_line.lstrip.gsub /^\s+/, ''}\n" if expected_line != actual_line
-        end
+        syntax_error_message ||
+          each_line_pair do |expected_line, actual_line|
+            next if lines_match? expected_line, actual_line
+            return "Output had extra line: #{actual_line}\n" unless expected_line
+            return "Input had extra line: #{expected_line}\n" unless actual_line
+            return "Expected: #{expected_line.gsub /^\s+/, ''}\nActual:   #{actual_line.lstrip.gsub /^\s+/, ''}\n" if expected_line != actual_line
+          end
       end
 
       def lines_match?(line1, line2)

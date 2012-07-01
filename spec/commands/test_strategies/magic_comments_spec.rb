@@ -24,6 +24,16 @@ describe test_class::MagicComments do
   end
 
   describe '#failure_message' do
+    it "provides Ruby's syntax message if the syntax is not valid" do
+      magic_comments = described_class.new '}'
+      syntax_checker = magic_comments.syntax_checker
+      syntax_checker.was initialized_with '}'
+      syntax_checker.will_have_valid? false  # should surrogate provide: will_be_valid? ?
+      syntax_checker.will_have_invalid_message "} ain't no kinda valid"
+      magic_comments.pass?.should be_false
+      magic_comments.failure_message.should == "} ain't no kinda valid"
+    end
+
     it 'identifies the first output line that differs from the input' do
       magic_comments = described_class.new <<-CODE.gsub(/^\s*/, '')
         1 + 2     # => 3

@@ -56,3 +56,28 @@ Feature: Testing with :rspec
       /spec.rb:2:in `block (2 levels) in <top (required)>'
     """
     And I do not see the file "Readme.md"
+
+
+  Scenario: Invalid example
+    Given the file "Readme.mountain_berry_fields.md":
+    """
+    # Whatever
+
+
+        <% test 'My RSpec example', with: :rspec do %>
+        describe 'an example' do
+          it('is invalid syntax') { }}}}
+        end
+        <% end %>
+
+    ya see?
+    """
+    When I run "mountain_berry_fields Readme.mountain_berry_fields.md"
+    Then it exits with a status of 1, and a stderr of:
+    """
+    FAILURE: My RSpec example
+    -:2: syntax error, unexpected '}', expecting keyword_end
+          it('is invalid syntax') { }}}}
+                                      ^
+    """
+    And I do not see the file "Readme.md"

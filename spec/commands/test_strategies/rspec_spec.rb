@@ -29,6 +29,16 @@ describe MountainBerryFields::Commands::Test::RSpec do
   let(:open3_class) { Mock::Open3.clone }
   let(:the_spec)    { passing_spec }
 
+  it 'checks input syntax first' do
+    rspec = described_class.new the_spec
+    syntax_checker = rspec.syntax_checker
+    syntax_checker.was initialized_with the_spec
+    syntax_checker.will_have_valid? false  # rename to valid_syntax
+    syntax_checker.will_have_invalid_message "you call that code?"
+    rspec.pass?.should be_false
+    rspec.failure_message.should == "you call that code?"
+  end
+
   it 'writes the file to a temp dir' do
     rspec = described_class.new(the_spec).with_dependencies(dir_class: dir_class, file_class: file_class, open3_class: open3_class)
     dir_class.will_mktmpdir true

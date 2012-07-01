@@ -42,3 +42,25 @@ Feature: Testing with :magic_comments
     Actual:   1 + 2 # => 3
     """
     And I do not see the file "Readme.md"
+
+
+  Scenario: Invalid example
+    Given the file "Readme.mountain_berry_fields.md":
+    """
+    # Whatever
+
+        <% test 'basic addition', with: :magic_comments do %>
+        } + { # => 12
+        <% end %>
+
+    More shit here
+    """
+    When I run "mountain_berry_fields Readme.mountain_berry_fields.md"
+    Then it exits with a status of 1, and a stderr of:
+    """
+    FAILURE: basic addition
+    -:1: syntax error, unexpected '}'
+        } + { # => 12
+         ^
+    """
+    And I do not see the file "Readme.md"
