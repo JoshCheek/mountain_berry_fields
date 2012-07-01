@@ -1,4 +1,4 @@
-require 'mountain_berry_fields/commands'
+require 'mountain_berry_fields/test'
 
 class MountainBerryFields
 
@@ -43,8 +43,8 @@ class MountainBerryFields
 
     def test(name, options={}, &block)
       code = setup_code + in_context(options[:context], block.call.to_s)
-      test = Commands::Test.new(name, options.merge(code: code))
-      strategy = Commands::Test::Strategy.for(test.strategy).new(test.code)
+      test = Test.new(name, options.merge(code: code))
+      strategy = Test::Strategy.for(test.strategy).new(test.code)
       unless strategy.pass?
         @failing_strategy = strategy
         @failing_test     = test

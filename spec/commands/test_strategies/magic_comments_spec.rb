@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-test_class = MountainBerryFields::Commands::Test
+test_class = MountainBerryFields::Test
 
 describe test_class::MagicComments do
   it 'is registered it the strategy list under :magic_comments' do

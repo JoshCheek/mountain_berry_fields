@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-test_class = MountainBerryFields::Commands::Test
+test_class = MountainBerryFields::Test
 describe test_class::AlwaysFail do
   it 'is registered it the strategy list under :always_pass' do
     test_class::Strategy.for(:always_fail).should == described_class

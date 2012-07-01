@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-module MountainBerryFields::Commands
+class MountainBerryFields
   describe Test do
     let(:name)          { 'Some name' }
     let(:code)          { 'Some code' }

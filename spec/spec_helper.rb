@@ -100,5 +100,5 @@ MountainBerryFields.override(:evaluator_class) { Mock::Evaluator.clone }
 MountainBerryFields.override(:parser_class)    { Mock::Parser.clone }
 
 MountainBerryFields::CommandLineInteraction.override(:stderr) { StringIO.new }
-MountainBerryFields::Commands::Test::RSpec.override(:syntax_checker_class) { Mock::SyntaxChecker }
-MountainBerryFields::Commands::Test::MagicComments.override(:syntax_checker_class) { Mock::SyntaxChecker }
+MountainBerryFields::Test::RSpec.override(:syntax_checker_class) { Mock::SyntaxChecker }
+MountainBerryFields::Test::MagicComments.override(:syntax_checker_class) { Mock::SyntaxChecker }

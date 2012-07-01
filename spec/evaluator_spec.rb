@@ -41,7 +41,7 @@ describe MountainBerryFields::Evaluator do
 
 
   describe '#tests_pass?' do
-    test_class = MountainBerryFields::Commands::Test
+    test_class = MountainBerryFields::Test
 
     it 'evaluates the text if not evaluated' do
       should_evaluate { |evaluator| evaluator.tests_pass? }
@@ -58,7 +58,7 @@ describe MountainBerryFields::Evaluator do
       evaluator.test('Failbert', with: :always_fail) {}
       evaluator.tests_pass?.should == false
       evaluator.failure_name.should == 'Failbert'
-      evaluator.failure_message.should == MountainBerryFields::Commands::Test::Strategy.for(:always_fail).new('').failure_message
+      evaluator.failure_message.should == MountainBerryFields::Test::Strategy.for(:always_fail).new('').failure_message
     end
   end
 

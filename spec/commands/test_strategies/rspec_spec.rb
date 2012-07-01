@@ -1,8 +1,8 @@
 require 'spec_helper'
 
-describe MountainBerryFields::Commands::Test::RSpec do
+describe MountainBerryFields::Test::RSpec do
   it 'is registered it the strategy list under :rspec' do
-    MountainBerryFields::Commands::Test::Strategy.for(:rspec).should == described_class
+    MountainBerryFields::Test::Strategy.for(:rspec).should == described_class
   end
 
   let(:passing_spec) { <<-EOF.gsub /^ {4}/, '' }

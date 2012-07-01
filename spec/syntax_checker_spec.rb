@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe MountainBerryFields::Commands::Test::SyntaxChecker do
+describe MountainBerryFields::Test::SyntaxChecker do
   it 'implements the SyntaxChecker interface' do
     Mock::SyntaxChecker.should substitute_for described_class
   end
