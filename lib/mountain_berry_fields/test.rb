@@ -85,5 +85,4 @@ end
 
 require 'mountain_berry_fields/test/always_fail'
 require 'mountain_berry_fields/test/always_pass'
-require 'mountain_berry_fields/test/magic_comments'
-require 'mountain_berry_fields/test/rspec'
+Gem.find_files("mountain_berry_fields/test/*").each { |path| require path }
