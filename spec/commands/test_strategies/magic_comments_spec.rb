@@ -8,19 +8,19 @@ describe test_class::MagicComments do
   end
 
   specify '#pass? returns true if the output is the same as the input' do
-    described_class.new('1 + 1 # => 2').pass?.should == true
-    described_class.new('1 + 2 # => 2').pass?.should == false
-    described_class.new("a=1\nb=2\na+b # => 3").pass?.should == true
+    described_class.new('1 + 1 # => 2').should pass
+    described_class.new('1 + 2 # => 2').should_not pass
+    described_class.new("a=1\nb=2\na+b # => 3").should pass
   end
 
   it 'ignores warnings in the output' do
-    described_class.new("1").pass?.should == true
+    described_class.new("1").should pass
   end
 
   it 'ignores differences that look like object inspections' do
-    described_class.new("Object.new # => #<Object:0x007f9ef108b578>").pass?.should == true
-    described_class.new("Object.new # => #<NotObject:0x007f9ef108b578>").pass?.should == false
-    described_class.new("Class.new.new # => #<#<Class:0x007fc6d388b548>:0x007fc6d388b4f8>").pass?.should == true
+    described_class.new("Object.new # => #<Object:0x007f9ef108b578>").should pass
+    described_class.new("Object.new # => #<NotObject:0x007f9ef108b578>").should_not pass
+    described_class.new("Class.new.new # => #<#<Class:0x007fc6d388b548>:0x007fc6d388b4f8>").should pass
   end
 
   describe '#failure_message' do
@@ -30,7 +30,7 @@ describe test_class::MagicComments do
       syntax_checker.was initialized_with '}'
       syntax_checker.will_have_valid? false  # should surrogate provide: will_be_valid? ?
       syntax_checker.will_have_invalid_message "} ain't no kinda valid"
-      magic_comments.pass?.should be_false
+      magic_comments.should_not pass
       magic_comments.failure_message.should == "} ain't no kinda valid"
     end
 

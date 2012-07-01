@@ -6,6 +6,11 @@ require 'mountain_berry_fields/command_line_interaction'
 require 'stringio'
 require 'surrogate/rspec'
 
+
+RSpec::Matchers.define :pass do
+  match { |matcher| matcher.pass? }
+end
+
 module Mock
   class SyntaxChecker
     Surrogate.endow self

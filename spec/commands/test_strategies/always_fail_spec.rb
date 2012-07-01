@@ -13,9 +13,9 @@ describe test_class::AlwaysFail do
   end
 
   specify '#pass? evaluates the code and returns false even in the face of bullshit' do
-    described_class.new("raise Exception, 'this will still pass'").pass?.should == false
+    described_class.new("raise Exception, 'this will still pass'").should_not pass
     $abc = ''
-    described_class.new("$abc=123").pass?.should == false
+    described_class.new("$abc=123").should_not pass
     $abc.should == 123
   end
 

@@ -35,7 +35,7 @@ describe MountainBerryFields::Commands::Test::RSpec do
     syntax_checker.was initialized_with the_spec
     syntax_checker.will_have_valid? false  # rename to valid_syntax
     syntax_checker.will_have_invalid_message "you call that code?"
-    rspec.pass?.should be_false
+    rspec.should_not pass
     rspec.failure_message.should == "you call that code?"
   end
 
@@ -64,11 +64,11 @@ describe MountainBerryFields::Commands::Test::RSpec do
   it 'passes when rspec executes successfully' do
     open3_class = Mock::Open3.clone.exit_with_success!
     rspec = described_class.new(the_spec).with_dependencies(dir_class: dir_class, file_class: file_class, open3_class: open3_class)
-    rspec.pass?.should be_true
+    rspec.should pass
 
     open3_class = Mock::Open3.clone.exit_with_failure!
     rspec = described_class.new(the_spec).with_dependencies(dir_class: dir_class, file_class: file_class, open3_class: open3_class)
-    rspec.pass?.should be_false
+    rspec.should_not pass
   end
 
   it 'pulls its failure message from the JSON output of the results, showing the description, message, and backtrace without the temp dir' do

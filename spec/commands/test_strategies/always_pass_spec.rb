@@ -7,9 +7,9 @@ describe test_class::AlwaysPass do
   end
 
   specify '#pass? evaluates the code and returns true even in the face of bullshit' do
-    described_class.new("raise Exception, 'this will still pass'").pass?.should == true
+    described_class.new("raise Exception, 'this will still pass'").should pass
     $abc = ''
-    described_class.new("$abc=123").pass?.should == true
+    described_class.new("$abc=123").should pass
     $abc.should == 123
   end
 end
