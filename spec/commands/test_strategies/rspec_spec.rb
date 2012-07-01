@@ -73,7 +73,7 @@ describe MountainBerryFields::Test::RSpec do
 
   it 'pulls its failure message from the JSON output of the results, showing the description, message, and backtrace without the temp dir' do
     temp_dir = 'some_temp_dir'
-    open3_class.will_capture3 [%'{"full_description":"THE DESCRIPTION","message":"THE MESSAGE","backtrace":["#{temp_dir}/THE BACKTRACE"]}', '', Mock::Process::ExitStatus.new]
+    open3_class.will_capture3 [%'{"full_description":"THE DESCRIPTION","message":"THE MESSAGE","backtrace":["#{temp_dir}/THE BACKTRACE"]}', '', Mock::Process::Status.new]
     rspec = described_class.new(the_spec).with_dependencies(dir_class: dir_class, file_class: file_class, open3_class: open3_class)
     rspec.pass?
     dir_class.was told_to(:mktmpdir).with(anything) { |block| block.call_with temp_dir }

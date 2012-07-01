@@ -35,7 +35,7 @@ module Mock
   end
 
   module Process
-    class ExitStatus
+    class Status
       Surrogate.endow self
       define(:success?) { true }
     end
@@ -43,17 +43,17 @@ module Mock
 
   class Open3
     Surrogate.endow self do
-      define(:capture3) { |invocation| ["stdout", "stderr", @exitstatus||Process::ExitStatus.new] }
+      define(:capture3) { |invocation| ["stdout", "stderr", @exitstatus||Process::Status.new] }
     end
 
 
     def self.exit_with_failure!
-      @exitstatus = Process::ExitStatus.new.will_have_success? false
+      @exitstatus = Process::Status.new.will_have_success? false
       self
     end
 
     def self.exit_with_success!
-      @exitstatus = Process::ExitStatus.new.will_have_success? true
+      @exitstatus = Process::Status.new.will_have_success? true
       self
     end
   end
