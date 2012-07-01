@@ -5,9 +5,10 @@ Tests code in readme files, generates the readme if they are successful.
 ## TODO
 
 * uh... make this a real readme
-* add rake task
 * release as gem
 * extract magic_comments and rspec out into their own gems
+* set up input files so they don't need a .mountain_berry_fields in their name if given a -o flag
+* set up input flag so `mountain_berry_fields -s` will list the test strategies
 
 ## Installation
 
