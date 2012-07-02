@@ -64,7 +64,7 @@ class MountainBerryFields
 
 
   # checks syntax of a code example
-  class Test::SyntaxChecker
+  class Test::RubySyntaxChecker
     def initialize(code_to_test)
       @code_to_test = code_to_test
     end
