@@ -126,13 +126,26 @@ Or install it yourself as:
     $ gem install readme_tester
 
 ## TODO
+* use MBF to test this readme
+  - install all locally as gems
+  - test the shit
+* add links to examples where I do all of the above
+  - edit dependencies to have mbf as dev dep
+  - add rake tasks
+  - push to github
+* Fix dependencies such that they use Rubygems instead of Gemfiles
+  - edit gemfiles and gemspecs
+* Fix all readmes and gem descriptions
+* push all 3 gems to github
+* set it up on Travis
 
-* set up input files so they don't need a .mountain_berry_fields in their name if given a -o flag
-* set up input flag so `mountain_berry_fields -s` will list the test strategies
+## Features to add for v2
 * contexts should be lazy (can define context after a block that uses it)
 * should be able to pass options to the initializer
-* create repositories for the extracted gems
-* add links to examples where I do all of the above
-* use rake tasks on Surrogate and Deject
-* Fix dependencies such that they use Rubygems instead of Gemfiles
-* push all 3 gems to github
+* enable the test strategy to decide what should be returned
+* support for multiple input files
+* FLAGS:
+* * -o set up input files so they don't need a .mountain_berry_fields in their name (output filename is provided, so input filename needs no naming conventions)
+* * -s list all known test strategies
+* * -v version
+* * -c check syntax (no output, thus also no input filename restrictions)
