@@ -125,4 +125,9 @@ describe MountainBerryFields::Parser do
       invisible_in('<% invisible do %>\'a\'\\<% end %>').should == ['\'a\'\\']
     end
   end
+
+  it 'ignores erb tags inside erb blocks' do
+    parsed("a<% s='<% visible { %>b<% } %>' %>c").should == "ac\n"
+    parsed("a<% s='<% invisible { %>b<% } %>' %>c").should == "ac\n"
+  end
 end
