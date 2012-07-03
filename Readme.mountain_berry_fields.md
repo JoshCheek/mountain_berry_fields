@@ -28,7 +28,84 @@ MountainBerryFields::Test::Strategy.register :install_dep, Class.new {
   end
 }
 
-# MountainBerryFields::Test::Strategy.register
+
+MountainBerryFields::Test::Strategy.register  :mbf_example, Class.new {
+  include MountainBerryFields::Test::Strategy
+
+  attr_accessor :input_filename, :input_code, :command_line_invocation, :output_filename, :output_code, :expected_failure
+
+  def pass?
+    parse
+    happy_path && sad_path
+  end
+
+  def failure_message
+    @failure_message || ''
+  end
+
+  def happy_path
+    require 'tmpdir'
+    require 'open3'
+
+    happy_lib_code = '
+    <%% setup do %>
+      MyLibName = Struct.new :data do
+        def result
+          "some cool result"
+        end
+      end
+    <%% end %>
+    '
+
+puts "TO WRITE: #{happy_lib_code + input_code}"
+
+    Dir.mktmpdir 'happy_path' do |dir|
+      Dir.chdir dir do
+        File.write input_filename, happy_lib_code + input_code
+#        o, e, s = Open3.capture3 command_line_invocation
+#puts "FILE: #{File.read input_filename}"
+#puts "OUTPUT: #{o.inspect}"
+#puts "ERROR: #{e.inspect}"
+#puts "STATUS: #{s.inspect}"
+#        @failure_message ||= e
+#        s.success?
+      end
+    end
+  end
+
+def sad_path
+end
+
+  # all this parsing is overly simple and a bit fragile, but good enough
+  def parse
+    results = code_to_test.split(/^(?=\S)/)
+    parse_setup      results.shift
+    parse_happy_path results.shift
+    parse_sad_path   results.shift
+  end
+
+  def parse_setup(raw_setup)
+    lines = raw_setup.lines.to_a
+    self.input_filename = lines.shift[/`(.*?)`/, 1]
+    lines.shift
+    lines.pop
+    self.input_code = lines.join.gsub(/^ {4}/, '')
+  end
+
+  def parse_happy_path(raw_happy_path)
+    lines = raw_happy_path.lines.to_a
+    first_line = lines.shift
+    self.command_line_invocation, self.output_filename = first_line.scan(/`[^`]*`/).map { |text| text[1...-1] }
+    command_line_invocation.sub! /^\$\s+/, ''
+    lines.shift
+    lines.pop
+    self.output_code = lines.join.gsub(/^ {4}/, '')
+  end
+
+  def parse_sad_path(raw_sad_path)
+    self.expected_failure = raw_sad_path.lines.drop(2).join.gsub(/^ {4}/, '')
+  end
+}
 %>
 
 # ReadmeTester
@@ -48,3 +125,26 @@ You will need to
 `<% test('dep magic_comments', with: :install_dep) { %>$ gem install mountain_berry_fields-magic_comments<% } %>`
 for this to work.
 
+<% test 'show magic comments', with: :mbf_example do %>
+The file `Readme.mountain_berry_fields.md`
+
+    # MyLibName
+
+        <%% test 'an example', with: :magic_comments do %>
+        MyLibName.new('some data').result # => "some cool result"
+        <%% end %>
+
+Run `$ mountain_berry_fields Readme.mountain_berry_fields.md` and it will generate `Readme.md`
+
+    # MyLibName
+
+        MyLibName.new('some data').result # => "some cool result"
+
+If at some point, you change your lib to not do that cool thing, then it will not generate the file.  Instead it will give you an error message:
+
+    FAILURE: an example
+    Expected: MyLibName.new('some data').result # => "some cool result"
+    Actual:   MyLibName.new('some data').result # => "some unexpected result"
+<% end %>
+
+Now you can be confident that your code is still legit.
