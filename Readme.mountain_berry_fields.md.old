@@ -1,14 +1,3 @@
-### Rake Task
-
-If you want to add this as part of your build, there is a rake task:
-
-```ruby
-MountainBerryFields::RakeTask.new(:mbf, 'Readme.mountain_berry_fields.md')
-```
-
-which will allow you to say `rake mbf`. You could then add it to your default task with
-`task default: :mbf`, or have whatever task runs your tests just execute it at the end.
-
 ### Creating your own test strategy
 
 I've written the magic_comments and rspec strategies. You can write your own that do

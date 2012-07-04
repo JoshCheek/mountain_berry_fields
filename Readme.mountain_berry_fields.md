@@ -112,3 +112,18 @@ Use the `__CODE__` macro to indicate where the code should go relative to this c
 
 Context blocks can, themselves, be rendered into a context `<%% context 'current', context: "my context's context" do %>`
 
+### Rake Task
+
+If you want to add this as part of your build, there is a rake task:
+
+```ruby
+<%# this is the only one I'm going to test here. Maybe in the future, a gem for strategies specifically targeting rake %>
+<% test 'rake task', with: :task_named_mbf do %>
+require 'mountain_berry_fields/rake_task'
+MountainBerryFields::RakeTask.new(:mbf, 'Readme.mountain_berry_fields.md')
+<% end %>
+```
+
+which will allow you to say `rake mbf`. You could then add it to your default task with
+`task default: :mbf`, or have whatever task runs your tests just execute it at the end.
+

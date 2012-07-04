@@ -1,7 +1,8 @@
 # Okay look, I know this code is scary, and you're like "I don't want to
-# have to do that shit for my project". But it's not likely that you will,
-# I didn't have to when I did Deject or Surrogate, it's just that this
-# code is embedding readmes in readmes, so they're not really code samples.
+# have to do that shit for my project".
+#
+# But it's not likely that you will, I didn't have to when I did Deject or Surrogate,
+# it's just that this code is embedding readmes in readmes, so they're not really code samples.
 
 Strategy = MountainBerryFields::Test::Strategy
 
@@ -174,3 +175,20 @@ Strategy.register :requires_lib, Class.new {
       <% end %>'
   end
 }
+
+Strategy.register :task_named_mbf, Class.new {
+  def initialize(task_definition)
+    @task_definition = task_definition
+  end
+
+  def pass?
+    require 'rake'
+    eval @task_definition
+    Rake::Task[:mbf] rescue nil
+  end
+
+  def failure_message
+    "No task named :mbf"
+  end
+}
+
