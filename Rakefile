@@ -1,7 +1,6 @@
 #!/usr/bin/env rake
 require 'bundler/gem_tasks'
 
-
 task :rspec do
   require 'rspec'
   Dir.glob("spec/**/*_spec.rb").each { |filename| require File.expand_path filename }
@@ -22,6 +21,10 @@ task rspec_must_be_100_percent: :rspec do
   end
 end
 
-task default: [:rspec_must_be_100_percent, :cucumber]
+
+require 'mountain_berry_fields/rake_task'
+MountainBerryFields::RakeTask.new(:generate_readme, 'Readme.mountain_berry_fields.md')
+
+task default: [:rspec_must_be_100_percent, :cucumber, :generate_readme]
 
 
