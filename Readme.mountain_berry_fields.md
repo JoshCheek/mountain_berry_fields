@@ -94,3 +94,21 @@ Do that with a setup block:
 
 This will not show up anywhere in the generated file. It will be prepended before each code sample when running tests.
 
+### Context blocks
+
+Some examples may need to be executed within a context. Use a context block for that.
+Use the `__CODE__` macro to indicate where the code should go relative to this context.
+
+<% test 'context block', with: :generic_mbf do %>
+    <%% context 'a user named Carlita' do %>
+    user = Struct.new(:name).new 'Carlita'
+    __CODE__
+    <%% end %>
+
+    <%% test 'users have a name', context: 'a user named Carlita', with: :magic_comments do %>
+    user.name # => "Carlita"
+    <%% end %>
+<% end %>
+
+Context blocks can, themselves, be rendered into a context `<%% context 'current', context: "my context's context" do %>`
+

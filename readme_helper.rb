@@ -3,11 +3,10 @@
 # I didn't have to when I did Deject or Surrogate, it's just that this
 # code is embedding readmes in readmes, so they're not really code samples.
 
+Strategy = MountainBerryFields::Test::Strategy
 
 # maybe this should be pulled into its own gem? it seems generally useful
-MountainBerryFields::Test::Strategy.register :install_dep, Class.new {
-  include MountainBerryFields::Test::Strategy
-
+Strategy.register :install_dep, Class.new {
   def initialize(install_string)
     @prompt, @gem_command, @install_command, @dependency_name = install_string.split
     @gemspec = Gem::Specification.load 'mountain_berry_fields.gemspec'
@@ -36,8 +35,8 @@ MountainBerryFields::Test::Strategy.register :install_dep, Class.new {
 
 require 'tmpdir'
 require 'open3'
-MountainBerryFields::Test::Strategy.register :mbf_example, Class.new {
-  include MountainBerryFields::Test::Strategy
+Strategy.register :mbf_example, Class.new {
+  include Strategy
 
   attr_accessor :input_filename, :input_code, :command_line_invocation, :output_filename, :output_code, :expected_failure, :failure_message
 
@@ -125,30 +124,53 @@ MountainBerryFields::Test::Strategy.register :mbf_example, Class.new {
 }
 
 
-MountainBerryFields::Test::Strategy.register :requires_lib, Class.new {
-  include MountainBerryFields::Test::Strategy
+Strategy.register :generic_mbf, Class.new {
+  attr_reader :failure_message
 
-  attr_accessor :setup_block, :failure_message
+  def initialize(code_to_test, filename='f.mountain_berry_fields', invocation="mountain_berry_fields #{filename}", &do_in_dir)
+    @code_to_test, @filename, @invocation, @do_in_dir =
+     code_to_test,  filename,  invocation,  do_in_dir
+  end
+
+  def pass?
+    @pass ||= Dir.mktmpdir 'setup_block' do |dir|
+      Dir.chdir dir do
+        @do_in_dir.call if @do_in_dir
+        File.write @filename, @code_to_test
+        out, @failure_message, status = Open3.capture3 @invocation
+        status.success?
+      end
+    end
+  end
+}
+
+
+Strategy.register :requires_lib, Class.new {
+  attr_accessor :setup_block
 
   def initialize(setup_block)
     self.setup_block = setup_block
   end
 
   def pass?
-    test_block = '
+    strategy.pass?
+  end
+
+  def failure_message
+    strategy.failure_message
+  end
+
+  def strategy
+    @strategy ||= Strategy.for(:generic_mbf).new(code_to_test) do
+      Dir.mkdir 'lib'
+      File.write 'lib/my_lib_name.rb', 'MyLibName = 12'
+    end
+  end
+
+  def code_to_test
+    %'#{setup_block}
       <% test "loaded", with: :magic_comments do %>
       MyLibName # => 12
-      <% end %>
-    '
-    Dir.mktmpdir 'setup_block' do |dir|
-      Dir.chdir dir do
-        Dir.mkdir 'lib'
-        File.write 'lib/my_lib_name.rb', 'MyLibName = 12'
-        File.write 'f.mountain_berry_fields', setup_block + test_block
-        out, err, status = Open3.capture3 "mountain_berry_fields f.mountain_berry_fields"
-        self.failure_message = err
-        status.success?
-      end
-    end
+      <% end %>'
   end
 }
