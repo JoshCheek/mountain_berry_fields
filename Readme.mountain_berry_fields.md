@@ -1,113 +1,4 @@
-<%
-# STRATEGIES (maybe some of these should be pulled into their own gems? they seem generally useful)
-MountainBerryFields::Test::Strategy.register :install_dep, Class.new {
-  include MountainBerryFields::Test::Strategy
-
-  def initialize(install_string)
-    @prompt, @gem_command, @install_command, @dependency_name = install_string.split
-    @gemspec = Gem::Specification.load 'mountain_berry_fields.gemspec'
-  end
-
-  def pass?
-    !failure_message
-  end
-
-  def failure_message
-    return %'prompt marker is "$", not #{@prompt.inspect}' unless @prompt == '$'
-    return %'gem command is "gem", not #{@gem_command.inspect}' unless @gem_command == 'gem'
-    return %'install command is "install", not #{@install_command.inspect}' unless @install_command == 'install'
-    return %'development dependencies are #{development_dependencies.inspect} WTF is #{@dependency_name.inspect}?' unless is_dependency?
-  end
-
-  def development_dependencies
-    @gemspec.development_dependencies.map &:name
-  end
-
-  def is_dependency?
-    development_dependencies.include? @dependency_name
-  end
-}
-
-
-MountainBerryFields::Test::Strategy.register  :mbf_example, Class.new {
-  include MountainBerryFields::Test::Strategy
-
-  attr_accessor :input_filename, :input_code, :command_line_invocation, :output_filename, :output_code, :expected_failure
-
-  def pass?
-    parse
-    happy_path && sad_path
-  end
-
-  def failure_message
-    @failure_message || ''
-  end
-
-  def happy_path
-    require 'tmpdir'
-    require 'open3'
-
-    happy_lib_code = '
-    <%% setup do %>
-      MyLibName = Struct.new :data do
-        def result
-          "some cool result"
-        end
-      end
-    <%% end %>
-    '
-
-puts "TO WRITE: #{happy_lib_code + input_code}"
-
-    Dir.mktmpdir 'happy_path' do |dir|
-      Dir.chdir dir do
-        File.write input_filename, happy_lib_code + input_code
-#        o, e, s = Open3.capture3 command_line_invocation
-#puts "FILE: #{File.read input_filename}"
-#puts "OUTPUT: #{o.inspect}"
-#puts "ERROR: #{e.inspect}"
-#puts "STATUS: #{s.inspect}"
-#        @failure_message ||= e
-#        s.success?
-      end
-    end
-  end
-
-def sad_path
-end
-
-  # all this parsing is overly simple and a bit fragile, but good enough
-  def parse
-    results = code_to_test.split(/^(?=\S)/)
-    parse_setup      results.shift
-    parse_happy_path results.shift
-    parse_sad_path   results.shift
-  end
-
-  def parse_setup(raw_setup)
-    lines = raw_setup.lines.to_a
-    self.input_filename = lines.shift[/`(.*?)`/, 1]
-    lines.shift
-    lines.pop
-    self.input_code = lines.join.gsub(/^ {4}/, '')
-  end
-
-  def parse_happy_path(raw_happy_path)
-    lines = raw_happy_path.lines.to_a
-    first_line = lines.shift
-    self.command_line_invocation, self.output_filename = first_line.scan(/`[^`]*`/).map { |text| text[1...-1] }
-    command_line_invocation.sub! /^\$\s+/, ''
-    lines.shift
-    lines.pop
-    self.output_code = lines.join.gsub(/^ {4}/, '')
-  end
-
-  def parse_sad_path(raw_sad_path)
-    self.expected_failure = raw_sad_path.lines.drop(2).join.gsub(/^ {4}/, '')
-  end
-}
-%>
-
+<% load "readme_helper.rb" %>
 # ReadmeTester
 
 Tests code in readme files, generates the readme if they are successful.
@@ -148,3 +39,56 @@ If at some point, you change your lib to not do that cool thing, then it will no
 <% end %>
 
 Now you can be confident that your code is still legit.
+
+### Code samples with RSpec
+
+You will need to
+`<% test('dep rspec', with: :install_dep) { %>$ gem install mountain_berry_fields-rspec<% } %>`
+for this to work.
+
+<% test 'show rspec', with: :mbf_example do %>
+The file `Readme.mountain_berry_fields.md`
+
+    # MyLibName
+
+        <%% test 'an example', with: :rspec do %>
+        describe MyLibName do
+          it 'does what I made it do' do
+            described_class.new('some data').result.should == 'some cool result'
+          end
+        end
+        <%% end %>
+
+Run `$ mountain_berry_fields Readme.mountain_berry_fields.md` to generate `Readme.md`
+
+    # MyLibName
+
+        describe MyLibName do
+          it 'does what I made it do' do
+            described_class.new('some data').result.should == 'some cool result'
+          end
+        end
+
+And an rspec error:
+
+    FAILURE: an example
+    MyLibName does what I made it do:
+      expected: "some cool result"
+         got: "some unexpected result" (using ==)
+
+    backtrace:
+      /spec.rb:8:in `block (2 levels) in <top (required)>'
+<% end %>
+
+### Setup blocks
+
+You may need to do something to setup the environment for the tests (e.g. load the lib your examples are using)
+Do that with a setup block:
+
+    <% setup do %>
+    $LOAD_PATH.unshift File.expand_path '../lib', __FILE__
+    require 'my_lib_name'
+    <% end %>
+
+This will not show up anywhere in the generated file. It will be prepended before each code sample when running tests.
+

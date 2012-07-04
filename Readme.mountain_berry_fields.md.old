@@ -1,57 +1,3 @@
-# ReadmeTester
-
-Tests code in readme files, generates the readme if they are successful.
-
-## Usage
-
-When you have a file with embedded code samples, rename it to include a .mountain_berry_fields suffix.
-Then wrap test statements around the code samples. I've written two testing strategies: rspec and magic_comments.
-You can create your own without much effort.
-
-
-### Code samples with magic comments
-
-You will need to `gem install mountain_berry_fields-magic_comments` for this to work.
-
-The file Readme.mountain_berry_fields.md
-
-    # MyLibName
-
-        <% test 'an example', with: :magic_comments do %>
-        MyLibName.new('some data').result # => 'some cool result'
-        <% end %>
-
-Run `$ mountain_berry_fields Readme.mountain_berry_fields.md` and it will generate `Readme.md`
-
-    # MyLibName
-
-        MyLibName.new('some data').result # => 'some cool result'
-
-If at some point, you change your lib to not do that cool thing, then it will not generate the file.
-Instead it will give you an error message:
-
-FAILURE: an example
-Expected: MyLibName.new('some data').result # => 'some cool result'
-Actual:   MyLibName.new('some data').result # => 'some unexpected result'
-
-Now you can be confident that your code is still legit.
-
-### Code samples with RSpec
-
-You will need to `gem install mountain_berry_fields-rspec` for this to work.
-
-The file Readme.mountain_berry_fields.md
-
-    # MyLibName
-
-        <% test 'an example', with: :rspec do %>
-        describe MyLibName do
-          it 'does what I made it do' do
-            described_class.new('some data').result.should == 'some cool result'
-          end
-        end
-        <% end %>
-
 ### Setup blocks
 
 You may need to do something to setup the environment for the tests (e.g. load the lib your examples are using)
@@ -139,6 +85,15 @@ Or install it yourself as:
 * set it up on Travis
 
 ## Features to add for v2
+
+Note that my use cases are to be able to test Deject and Surrogate,
+which this currently does quite nicely. As a result, I have no imminent
+need for any of these features, and so they are not a priority for me.
+If you have a need for them (or for other features), let me know and that
+will cause it to be a much higher priority for me. Alternatively,
+pull requests that add them, fix bugs, or generally make it better,
+are more than welcome.
+
 * contexts should be lazy (can define context after a block that uses it)
 * should be able to pass options to the initializer
 * enable the test strategy to decide what should be returned
@@ -150,3 +105,4 @@ Or install it yourself as:
 * * -c check syntax (no output, thus also no input filename restrictions)
 * * -e flag for outputting erb (e.g. when it gives weird ass _buf error)
 * * -h to display this menu
+* * ?? to display the code that was passed to the test, along with the failure
