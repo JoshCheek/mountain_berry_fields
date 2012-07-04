@@ -6,7 +6,7 @@ Gem::Specification.new do |gem|
   gem.email         = ["josh.cheek@gmail.com"]
   gem.description   = %q{Test code samples embedded in files like readmes}
   gem.summary       = %q{Test code samples embedded in files like readmes}
-  gem.homepage      = "rspe://github.com/JoshCheek/mountain_berry_fields"
+  gem.homepage      = "https://github.com/JoshCheek/mountain_berry_fields"
 
   gem.files         = `git ls-files`.split($\)
   gem.executables   = gem.files.grep(%r{^bin/}).map{ |f| File.basename(f) }
