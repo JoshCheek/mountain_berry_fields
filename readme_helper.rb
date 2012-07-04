@@ -36,10 +36,10 @@ MountainBerryFields::Test::Strategy.register :install_dep, Class.new {
 
 require 'tmpdir'
 require 'open3'
-MountainBerryFields::Test::Strategy.register  :mbf_example, Class.new {
+MountainBerryFields::Test::Strategy.register :mbf_example, Class.new {
   include MountainBerryFields::Test::Strategy
 
-  attr_accessor :input_filename, :input_code, :command_line_invocation, :output_filename, :output_code, :expected_failure
+  attr_accessor :input_filename, :input_code, :command_line_invocation, :output_filename, :output_code, :expected_failure, :failure_message
 
   def pass?
     parse
@@ -84,7 +84,7 @@ MountainBerryFields::Test::Strategy.register  :mbf_example, Class.new {
       Dir.chdir dir do
         File.write input_filename, sad_lib_code + input_code
         oout, err, status = Open3.capture3 command_line_invocation
-        @failure_message = "Error should have been #{expected_failure.inspect}, but was #{err.inspect}"
+        self.failure_message = "Error should have been #{expected_failure.inspect}, but was #{err.inspect}"
         result =( expected_failure == err)
         result
       end
@@ -121,5 +121,34 @@ MountainBerryFields::Test::Strategy.register  :mbf_example, Class.new {
 
   def parse_sad_path(raw_sad_path)
     self.expected_failure = raw_sad_path.lines.drop(2).join.gsub(/^ {4}/, '')
+  end
+}
+
+
+MountainBerryFields::Test::Strategy.register :requires_lib, Class.new {
+  include MountainBerryFields::Test::Strategy
+
+  attr_accessor :setup_block, :failure_message
+
+  def initialize(setup_block)
+    self.setup_block = setup_block
+  end
+
+  def pass?
+    test_block = '
+      <% test "loaded", with: :magic_comments do %>
+      MyLibName # => 12
+      <% end %>
+    '
+    Dir.mktmpdir 'setup_block' do |dir|
+      Dir.chdir dir do
+        Dir.mkdir 'lib'
+        File.write 'lib/my_lib_name.rb', 'MyLibName = 12'
+        File.write 'f.mountain_berry_fields', setup_block + test_block
+        out, err, status = Open3.capture3 "mountain_berry_fields f.mountain_berry_fields"
+        self.failure_message = err
+        status.success?
+      end
+    end
   end
 }

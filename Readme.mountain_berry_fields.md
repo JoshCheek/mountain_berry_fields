@@ -85,10 +85,12 @@ And an rspec error:
 You may need to do something to setup the environment for the tests (e.g. load the lib your examples are using)
 Do that with a setup block:
 
-    <% setup do %>
+<% test 'setup blocks', with: :requires_lib do %>
+    <%% setup do %>
     $LOAD_PATH.unshift File.expand_path '../lib', __FILE__
     require 'my_lib_name'
-    <% end %>
+    <%% end %>
+<% end %>
 
 This will not show up anywhere in the generated file. It will be prepended before each code sample when running tests.
 

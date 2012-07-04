@@ -1,15 +1,3 @@
-### Setup blocks
-
-You may need to do something to setup the environment for the tests (e.g. load the lib your examples are using)
-Do that with a setup block:
-
-    <% setup do %>
-    $LOAD_PATH.unshift File.expand_path '../lib', __FILE__
-    require 'my_lib_name'
-    <% end %>
-
-This will not show up anywhere in the generated file. It will be prepended before each code sample when running tests.
-
 ### Context blocks
 
 Some examples may need to be executed within a context. Use a context block for that.
