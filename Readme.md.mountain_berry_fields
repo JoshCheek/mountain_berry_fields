@@ -40,7 +40,7 @@ If at some point, you change your lib to not do that cool thing, then it will no
 
 Now you can be confident that your code is still legit.
 
-Realworld [example](https://github.com/JoshCheek/deject/blob/8eb0d92949318cf4ef87c2b1a2070328024b0196/Readme.md.mountain_berry_fields#L40-48).
+Realworld [example](https://github.com/JoshCheek/deject/blob/8eb0d92949318cf4ef87c2b1a2070328024b0196/Readme.md.mountain_berry_fields#L40-49).
 
 ### Code samples with RSpec
 
@@ -157,7 +157,8 @@ to that strategy, and `#failure_message` which will used to describe why the spe
 failed to users.
 
 Realworld gem [example](https://github.com/JoshCheek/mountain_berry_fields-rspec/blob/cc6364ad106a7c65822542709bc5676bfb0b2c07/lib/mountain_berry_fields/test/rspec.rb).
-Realworld non-gem [example](https://github.com/JoshCheek/mountain_berry_fields/blob/be751536c8b0f94c84b09167fa83616b94b13b12/readme_helper.rb).
+Realworld non-gem [example](https://github.com/JoshCheek/mountain_berry_fields/blob/be751536c8b0f94c84b09167fa83616b94b13b12/readme_helper.rb),
+and the code that [loads](https://github.com/JoshCheek/mountain_berry_fields/blob/754c3fb9d26779e38c01e15999ea6b86137372a2/Readme.md.mountain_berry_fields#L1) it.
 
 ### About the name
 
