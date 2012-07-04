@@ -40,6 +40,8 @@ If at some point, you change your lib to not do that cool thing, then it will no
 
 Now you can be confident that your code is still legit.
 
+Realworld [example](https://github.com/JoshCheek/deject/blob/8eb0d92949318cf4ef87c2b1a2070328024b0196/Readme.md.mountain_berry_fields#L40-48).
+
 ### Code samples with RSpec
 
 You will need to
@@ -80,6 +82,8 @@ And an rspec error:
       /spec.rb:8:in `block (2 levels) in <top (required)>'
 <% end %>
 
+Realworld [example](https://github.com/JoshCheek/surrogate/blob/b7ad4d3cd5ce2e3b8bf44c3743436e4d614b1991/Readme.md.mountain_berry_fields#L254-258).
+
 ### Setup blocks
 
 You may need to do something to setup the environment for the tests (e.g. load the lib your examples are using)
@@ -93,6 +97,8 @@ Do that with a setup block:
 <% end %>
 
 This will not show up anywhere in the generated file. It will be prepended before each code sample when running tests.
+
+Realworld [example](https://github.com/JoshCheek/deject/blob/8eb0d92949318cf4ef87c2b1a2070328024b0196/Readme.md.mountain_berry_fields#L22-25).
 
 ### Context blocks
 
@@ -112,6 +118,8 @@ Use the `__CODE__` macro to indicate where the code should go relative to this c
 
 Context blocks can, themselves, be rendered into a context `<%% context 'current', context: "my context's context" do %>`
 
+Realworld [example](https://github.com/JoshCheek/surrogate/blob/b7ad4d3cd5ce2e3b8bf44c3743436e4d614b1991/Readme.md.mountain_berry_fields#L237-258).
+
 ### Rake Task
 
 If you want to add this as part of your build, there is a rake task:
@@ -127,6 +135,8 @@ MountainBerryFields::RakeTask.new(:mbf, 'Readme.mountain_berry_fields.md')
 which will allow you to say `$ rake mbf`. You could then add it to your default task with
 `task default: :mbf`, or have whatever task runs your tests just execute it at the end.
 
+Realworld [example](https://github.com/JoshCheek/surrogate/blob/b7ad4d3cd5ce2e3b8bf44c3743436e4d614b1991/Rakefile#L13-17).
+
 ### Creating your own test strategy
 
 I've written the magic_comments and rspec strategies. You can write your own that do
@@ -135,7 +145,7 @@ whatever interesting thing you've thought of.
 If you want it to be a gem, then the strategy needs to be in the file
 `mountain_berry_fields/test/your_strategy.rb`. Mountain Berry Fields
 will automatically load files at these paths. If your strategy is not a gem,
-and you want to manage loading the file containing its code, then you can ignore this.
+then it is up to you to ensure the code defining the strategy is loaded.
 
 Any strategy can be made accessible to the .mountain_berry_fields file like this:
 `<% test('registering', with: :register_your_strategy){ %>MountainBerryFields::Test::Strategy.register :your_strategy, YourStrategy<%}%>`
@@ -145,6 +155,9 @@ Strategies will be initialized with the code to test, and are expected to
 implement `#pass?` which returns a boolean of whether the code passes according
 to that strategy, and `#failure_message` which will used to describe why the spec
 failed to users.
+
+Realworld gem [example](https://github.com/JoshCheek/mountain_berry_fields-rspec/blob/cc6364ad106a7c65822542709bc5676bfb0b2c07/lib/mountain_berry_fields/test/rspec.rb).
+Realworld non-gem [example](https://github.com/JoshCheek/mountain_berry_fields/blob/be751536c8b0f94c84b09167fa83616b94b13b12/readme_helper.rb).
 
 ### About the name
 
@@ -157,14 +170,6 @@ The phrase "Mountain berry fields" is a lyric in a [song](http://www.myspace.com
 If it bothers you: `$ alias mbf=mountain_berry_fields`
 
 ## TODO
-* add links to examples where I do all of the above
-  - edit dependencies to have mbf as dev dep
-  - add rake tasks
-  - push to github
-* Fix dependencies such that they use Rubygems instead of Gemfiles
-  - edit gemfiles and gemspecs
-* Fix all readmes and gem descriptions
-* push all 3 gems to github
 * set it up on Travis
 
 ## Features to add for v2
