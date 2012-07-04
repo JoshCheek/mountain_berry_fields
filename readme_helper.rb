@@ -192,3 +192,14 @@ Strategy.register :task_named_mbf, Class.new {
   end
 }
 
+Strategy.register :register_your_strategy, Class.new {
+  def initialize(registration_code)
+    @registration_code = registration_code
+  end
+
+  def pass?
+    eval "YourStrategy = Object.new"
+    eval @registration_code
+    Strategy.for(:your_strategy) == YourStrategy
+  end
+}
