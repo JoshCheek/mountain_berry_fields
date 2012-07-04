@@ -1,4 +1,4 @@
-# ReadmeTester
+# MountainBerryFields
 
 Tests code in readme files, generates the readme if they are successful.
 
@@ -11,36 +11,39 @@ You can create your own without much effort.
 
 ### Code samples with magic comments
 
-You will need to `gem install mountain_berry_fields-magic_comments` for this to work.
+You will need to
+`$ gem install mountain_berry_fields-magic_comments`
+for this to work.
 
-The file Readme.mountain_berry_fields.md
+The file `Readme.mountain_berry_fields.md`
 
     # MyLibName
 
         <% test 'an example', with: :magic_comments do %>
-        MyLibName.new('some data').result # => 'some cool result'
+        MyLibName.new('some data').result # => "some cool result"
         <% end %>
 
 Run `$ mountain_berry_fields Readme.mountain_berry_fields.md` and it will generate `Readme.md`
 
     # MyLibName
 
-        MyLibName.new('some data').result # => 'some cool result'
+        MyLibName.new('some data').result # => "some cool result"
 
-If at some point, you change your lib to not do that cool thing, then it will not generate the file.
-Instead it will give you an error message:
+If at some point, you change your lib to not do that cool thing, then it will not generate the file.  Instead it will give you an error message:
 
-FAILURE: an example
-Expected: MyLibName.new('some data').result # => 'some cool result'
-Actual:   MyLibName.new('some data').result # => 'some unexpected result'
+    FAILURE: an example
+    Expected: MyLibName.new('some data').result # => "some cool result"
+    Actual:   MyLibName.new('some data').result # => "some unexpected result"
 
 Now you can be confident that your code is still legit.
 
 ### Code samples with RSpec
 
-You will need to `gem install mountain_berry_fields-rspec` for this to work.
+You will need to
+`$ gem install mountain_berry_fields-rspec`
+for this to work.
 
-The file Readme.mountain_berry_fields.md
+The file `Readme.mountain_berry_fields.md`
 
     # MyLibName
 
@@ -51,6 +54,26 @@ The file Readme.mountain_berry_fields.md
           end
         end
         <% end %>
+
+Run `$ mountain_berry_fields Readme.mountain_berry_fields.md` to generate `Readme.md`
+
+    # MyLibName
+
+        describe MyLibName do
+          it 'does what I made it do' do
+            described_class.new('some data').result.should == 'some cool result'
+          end
+        end
+
+And an rspec error:
+
+    FAILURE: an example
+    MyLibName does what I made it do:
+      expected: "some cool result"
+         got: "some unexpected result" (using ==)
+
+    backtrace:
+      /spec.rb:8:in `block (2 levels) in <top (required)>'
 
 ### Setup blocks
 
@@ -70,12 +93,12 @@ Some examples may need to be executed within a context. Use a context block for 
 Use the `__CODE__` macro to indicate where the code should go relative to this context.
 
     <% context 'a user named Carlita' do %>
-    user = User.new name: 'Carlita'
+    user = Struct.new(:name).new 'Carlita'
     __CODE__
     <% end %>
 
     <% test 'users have a name', context: 'a user named Carlita', with: :magic_comments do %>
-    user.name # => 'Carlita'
+    user.name # => "Carlita"
     <% end %>
 
 Context blocks can, themselves, be rendered into a context `<% context 'current', context: "my context's context" do %>`
@@ -85,10 +108,11 @@ Context blocks can, themselves, be rendered into a context `<% context 'current'
 If you want to add this as part of your build, there is a rake task:
 
 ```ruby
+require 'mountain_berry_fields/rake_task'
 MountainBerryFields::RakeTask.new(:mbf, 'Readme.mountain_berry_fields.md')
 ```
 
-which will allow you to say `rake mbf`. You could then add it to your default task with
+which will allow you to say `$ rake mbf`. You could then add it to your default task with
 `task default: :mbf`, or have whatever task runs your tests just execute it at the end.
 
 ### Creating your own test strategy
@@ -97,12 +121,12 @@ I've written the magic_comments and rspec strategies. You can write your own tha
 whatever interesting thing you've thought of.
 
 If you want it to be a gem, then the strategy needs to be in the file
-`lib/mountain_berry_fields/test/your_strategy.rb`. Mountain Berry Fields
+`mountain_berry_fields/test/your_strategy.rb`. Mountain Berry Fields
 will automatically load files at these paths. If your strategy is not a gem,
 and you want to manage loading the file containing its code, then you can ignore this.
 
 Any strategy can be made accessible to the .mountain_berry_fields file like this:
-`MountainBerryFields::Test::Strategy.register :your_strategy, YourStrategyHere`
+`MountainBerryFields::Test::Strategy.register :your_strategy, YourStrategy`
 And then accessed by `<% test 'testname', with: :your_strategy do %>`
 
 Strategies will be initialized with the code to test, and are expected to
@@ -110,25 +134,17 @@ implement `#pass?` which returns a boolean of whether the code passes according
 to that strategy, and `#failure_message` which will used to describe why the spec
 failed to users.
 
+### About the name
 
-## Installation
+I am often asked why I picked this name. I make things like this for me, because I have decided that they have value.
+I felt the need to remind myself of that so I chose a name that no one would realisitcally choose,
+to remind myself of the fact that no one could tell me I couldn't choose it.
 
-Add this line to your application's Gemfile:
+The phrase "Mountain berry fields" is a lyric in a [song](http://www.myspace.com/joyelectric/music/songs/birds-will-sing-forever-christian-songs-album-version-34576758) that makes me happy.
 
-    gem 'readme_tester'
-
-And then execute:
-
-    $ bundle
-
-Or install it yourself as:
-
-    $ gem install readme_tester
+If it bothers you: `$ alias mbf=mountain_berry_fields`
 
 ## TODO
-* use MBF to test this readme
-  - install all locally as gems
-  - test the shit
 * add links to examples where I do all of the above
   - edit dependencies to have mbf as dev dep
   - add rake tasks
@@ -140,6 +156,15 @@ Or install it yourself as:
 * set it up on Travis
 
 ## Features to add for v2
+
+Note that my use cases are to be able to test Deject and Surrogate,
+which this currently does quite nicely. As a result, I have no imminent
+need for any of these features, and so they are not a priority for me.
+If you have a need for them (or for other features), let me know and that
+will cause it to be a much higher priority for me. Alternatively,
+pull requests that add them, fix bugs, or generally make it better,
+are more than welcome.
+
 * contexts should be lazy (can define context after a block that uses it)
 * should be able to pass options to the initializer
 * enable the test strategy to decide what should be returned
@@ -149,3 +174,6 @@ Or install it yourself as:
 * * -s list all known test strategies
 * * -v version
 * * -c check syntax (no output, thus also no input filename restrictions)
+* * -e flag for outputting erb (e.g. when it gives weird ass _buf error)
+* * -h to display this menu
+* * ?? to display the code that was passed to the test, along with the failure
