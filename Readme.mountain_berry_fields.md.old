@@ -22,7 +22,7 @@ failed to users.
 
 Add this line to your application's Gemfile:
 
-    gem 'readme_tester'
+    gem 'mountain_berry_fields'
 
 And then execute:
 
@@ -30,7 +30,7 @@ And then execute:
 
 Or install it yourself as:
 
-    $ gem install readme_tester
+    $ gem install mountain_berry_fields
 
 ## TODO
 * use MBF to test this readme

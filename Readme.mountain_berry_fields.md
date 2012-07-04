@@ -1,5 +1,5 @@
 <% load "readme_helper.rb" %>
-# ReadmeTester
+# MountainBerryFields
 
 Tests code in readme files, generates the readme if they are successful.
 
