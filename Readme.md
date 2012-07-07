@@ -1,3 +1,5 @@
+![travis CI status](https://secure.travis-ci.org/JoshCheek/mountain_berry_fields.png?branch=master)
+
 # MountainBerryFields
 
 Tests code in readme files, generates the readme if they are successful.

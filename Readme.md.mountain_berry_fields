@@ -1,3 +1,5 @@
+![travis CI status](https://secure.travis-ci.org/JoshCheek/mountain_berry_fields.png?branch=master)
+
 <% load "readme_helper.rb" %>
 # MountainBerryFields
 

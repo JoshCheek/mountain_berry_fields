@@ -23,8 +23,9 @@ end
 
 
 require 'mountain_berry_fields/rake_task'
-MountainBerryFields::RakeTask.new(:generate_readme, 'Readme.md.mountain_berry_fields')
+desc 'Generate readme'
+MountainBerryFields::RakeTask.new(:readme, 'Readme.md.mountain_berry_fields')
 
-task default: [:rspec_must_be_100_percent, :cucumber, :generate_readme]
+task default: [:rspec_must_be_100_percent, :cucumber, :readme]
 
 
