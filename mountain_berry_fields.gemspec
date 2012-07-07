@@ -16,7 +16,7 @@ Gem::Specification.new do |gem|
   gem.version       = MountainBerryFields::VERSION
 
   gem.add_runtime_dependency 'erubis',                                   '= 2.7.0'
-  gem.add_runtime_dependency 'deject',                                   '~> 0.2.2'
+  gem.add_runtime_dependency 'deject',                                   '~> 0.2.3'
 
   gem.add_development_dependency 'mountain_berry_fields-magic_comments', '~> 1.0.0'
   gem.add_development_dependency 'mountain_berry_fields-rspec',          '~> 1.0.0'

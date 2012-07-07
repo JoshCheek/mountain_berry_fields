@@ -12,7 +12,7 @@ class MountainBerryFields
   dependency(:evaluator_class) { Evaluator }
   dependency(:parser_class)    { Parser }
   dependency(:file_class)      { File }
-  dependency(:dir_class)       { Dir }
+  dependency(:dir_class)       { ::Dir }
 
   def initialize(argv)
     self.argv = argv
