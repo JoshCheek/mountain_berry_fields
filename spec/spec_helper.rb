@@ -12,12 +12,15 @@ RSpec::Matchers.define :pass do
   match { |matcher| matcher.pass? }
 end
 
-MountainBerryFields.override(:file_class)      { MountainBerryFields::Interface::File.clone }
-MountainBerryFields.override(:dir_class)       { MountainBerryFields::Interface::Dir.clone }
-MountainBerryFields.override(:interaction)     { MountainBerryFields::Interface::Interaction.new }
-MountainBerryFields.override(:evaluator_class) { MountainBerryFields::Interface::Evaluator.clone }
-MountainBerryFields.override(:parser_class)    { MountainBerryFields::Interface::Parser.clone }
+# dependency injection
+class MountainBerryFields
+  override(:file_class)      { Interface::File.clone }
+  override(:dir_class)       { Interface::Dir.clone }
+  override(:interaction)     { Interface::Interaction.new }
+  override(:evaluator_class) { Interface::Evaluator.clone }
+  override(:parser_class)    { Interface::Parser.clone }
 
-MountainBerryFields::CommandLineInteraction.override(:stderr) { StringIO.new }
-MountainBerryFields::Test::RSpec.override(:syntax_checker_class) { MountainBerryFields::Interface::SyntaxChecker }
-MountainBerryFields::Test::MagicComments.override(:syntax_checker_class) { MountainBerryFields::Interface::SyntaxChecker }
+  CommandLineInteraction.override(:stderr) { StringIO.new }
+  Test::RSpec.override(:syntax_checker_class) { Interface::SyntaxChecker }
+  Test::MagicComments.override(:syntax_checker_class) { Interface::SyntaxChecker }
+end
