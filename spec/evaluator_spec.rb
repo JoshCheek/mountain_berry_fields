@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe MountainBerryFields::Evaluator do
   it 'implements the evaluator interface' do
-    Mock::Evaluator.should substitute_for described_class, subset: true
+    MountainBerryFields::Interface::Evaluator.should substitute_for described_class, subset: true
   end
 
   let(:to_evaluate) { '' }
