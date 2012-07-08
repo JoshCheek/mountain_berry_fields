@@ -1,4 +1,4 @@
-![travis CI status](https://secure.travis-ci.org/JoshCheek/mountain_berry_fields.png?branch=master)
+[![Build Status](https://secure.travis-ci.org/JoshCheek/mountain_berry_fields.png?branch=master)](http://travis-ci.org/JoshCheek/mountain_berry_fields)
 
 # MountainBerryFields
 
