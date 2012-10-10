@@ -2,7 +2,7 @@
 
 # MountainBerryFields
 
-Tests code in readme files, generates the readme if they are successful.
+Tests code samples embedded in files, such as readmes, it generates the real file if the tests are successful.
 
 ## Usage
 
@@ -160,9 +160,6 @@ The phrase "Mountain berry fields" is a lyric in a [song](http://www.myspace.com
 
 If it bothers you: `$ alias mbf=mountain_berry_fields`
 
-## TODO
-* set it up on Travis
-
 ## Features to add for v2
 
 Note that my use cases are to be able to test Deject and Surrogate,
@@ -176,7 +173,7 @@ are more than welcome.
 * contexts should be lazy (can define context after a block that uses it)
 * should be able to pass options to the initializer
 * enable the test strategy to decide what should be returned
-* support for multiple input files
+* support for multiple input files to the binary
 * FLAGS:
 * * -o set up input files so they don't need a .mountain_berry_fields in their name (output filename is provided, so input filename needs no naming conventions)
 * * -s list all known test strategies
