@@ -20,7 +20,7 @@ Gem::Specification.new do |gem|
 
   gem.add_development_dependency 'mountain_berry_fields-magic_comments', '~> 1.0.1'
   gem.add_development_dependency 'mountain_berry_fields-rspec',          '~> 1.0.3'
-  gem.add_development_dependency 'surrogate',                            '~> 0.5.3'
+  gem.add_development_dependency 'surrogate',                            '~> 0.7.0'
   gem.add_development_dependency 'rspec',                                '~> 2.10.0'
   gem.add_development_dependency 'cucumber',                             '~> 1.2.0'
   gem.add_development_dependency 'simplecov',                            '~> 0.6.4'
