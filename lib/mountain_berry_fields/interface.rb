@@ -39,7 +39,7 @@ class MountainBerryFields
     class Dir
       Surrogate.endow self do
         define(:chdir)    { |dir, &block| block.call }
-        define(:mktmpdir) { |prefix=nil, *, &block| block.call }
+        define(:mktmpdir) { |prefix=nil, *| }
       end
     end
 
