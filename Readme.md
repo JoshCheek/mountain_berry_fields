@@ -52,9 +52,10 @@ The file `Readme.mountain_berry_fields.md`
     # MyLibName
 
         <% test 'an example', with: :rspec do %>
-        describe MyLibName do
+        RSpec.describe MyLibName do
           it 'does what I made it do' do
-            described_class.new('some data').result.should == 'some cool result'
+            result = described_class.new('some data').result
+            expect(result).to eq 'some cool result'
           end
         end
         <% end %>
@@ -63,9 +64,10 @@ Run `$ mountain_berry_fields Readme.mountain_berry_fields.md` to generate `Readm
 
     # MyLibName
 
-        describe MyLibName do
+        RSpec.describe MyLibName do
           it 'does what I made it do' do
-            described_class.new('some data').result.should == 'some cool result'
+            result = described_class.new('some data').result
+            expect(result).to eq 'some cool result'
           end
         end
 
@@ -73,11 +75,14 @@ And an rspec error:
 
     FAILURE: an example
     MyLibName does what I made it do:
-      expected: "some cool result"
-         got: "some unexpected result" (using ==)
-
+      
+    expected: "some cool result"
+         got: "some unexpected result"
+    
+    (compared using ==)
+    
     backtrace:
-      /spec.rb:8:in `block (2 levels) in <top (required)>'
+      /spec.rb:9:in `block (2 levels) in <top (required)>'
 
 Realworld [example](https://github.com/JoshCheek/surrogate/blob/b7ad4d3cd5ce2e3b8bf44c3743436e4d614b1991/Readme.md.mountain_berry_fields#L254-258).
 

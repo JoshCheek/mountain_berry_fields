@@ -153,6 +153,10 @@ Strategy.register :requires_lib, Class.new {
     self.setup_block = setup_block
   end
 
+  def strategy
+    @strategy ||= Strategy.for(:generic_mbf).new(code_to_test) {}
+  end
+
   def pass?
     strategy.pass?
   end
@@ -161,15 +165,13 @@ Strategy.register :requires_lib, Class.new {
     strategy.failure_message
   end
 
-  def strategy
-    @strategy ||= Strategy.for(:generic_mbf).new(code_to_test) do
-      Dir.mkdir 'lib'
-      File.write 'lib/my_lib_name.rb', 'MyLibName = 12'
-    end
-  end
-
   def code_to_test
-    %'#{setup_block}
+    %'<% setup do %>
+      Dir.chdir File.dirname __FILE__
+      Dir.mkdir "lib"
+      File.write "lib/my_lib_name.rb", "MyLibName = 12"
+      <% end %>
+      #{setup_block}
       <% test "loaded", with: :magic_comments do %>
       MyLibName # => 12
       <% end %>'
