@@ -3,6 +3,7 @@
 # in place of any of these, it makes sense to depend on Surrogate at least in your test env,
 # in order to assert substitutability
 require 'surrogate'
+require 'tmpdir'
 
 class MountainBerryFields
   module Interface
@@ -38,7 +39,7 @@ class MountainBerryFields
     class Dir
       Surrogate.endow self do
         define(:chdir)    { |dir, &block| block.call }
-        define(:mktmpdir) { |prefix=nil, *| block.call }
+        define(:mktmpdir) { |prefix=nil, *, &block| block.call }
       end
     end
 

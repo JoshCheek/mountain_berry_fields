@@ -31,6 +31,4 @@ class MountainBerryFields
   override(:parser_class)    { Interface::Parser.clone }
 
   CommandLineInteraction.override(:stderr) { StringIO.new }
-  Test::RSpec.override(:syntax_checker_class) { Interface::SyntaxChecker }
-  Test::MagicComments.override(:syntax_checker_class) { Interface::SyntaxChecker }
 end
