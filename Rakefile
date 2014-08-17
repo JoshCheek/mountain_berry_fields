@@ -6,6 +6,7 @@ task :spec do
 end
 
 task rspec_must_be_100_percent: :spec do
+  require 'simplecov'
   percent = SimpleCov.result.covered_percent
   unless percent == 100
     SimpleCov.result.format!

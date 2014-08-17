@@ -1,12 +1,9 @@
-SimpleCov.start do
-  add_filter '/spec/'
-  add_filter '/features/'
+SimpleCov.merge_timeout 3600
 
-  # this gets acceptance tested, not unit tested
-  add_filter 'formatter.rb'
+SimpleCov.add_filter '/spec/'
+SimpleCov.add_filter '/features/'
 
-  # don't look at coverage of plugins, let them test themselves
-  add_filter do |source_file|
-    !source_file.filename[File.dirname(__FILE__)+'/']
-  end
+# don't look at coverage of plugins, let them test themselves
+SimpleCov.add_filter do |source_file|
+  !source_file.filename[File.dirname(__FILE__)+'/']
 end

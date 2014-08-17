@@ -1,4 +1,5 @@
 require 'simplecov'
+SimpleCov.start
 
 require 'mountain_berry_fields'
 require 'mountain_berry_fields/command_line_interaction'
