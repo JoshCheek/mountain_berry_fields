@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe MountainBerryFields::Parser do
+RSpec.describe MountainBerryFields::Parser do
   let :evaluator_class do
     Class.new do
       attr_reader :document, :visible_saw, :invisible_saw
@@ -59,70 +59,81 @@ describe MountainBerryFields::Parser do
     @evaluator.document
   end
 
+  def assert_parsed(pre, post)
+    expect(parsed pre).to eq post
+  end
+
   it 'parses normal erb code' do
-    parsed("a\n<% if true %>\ndo shit\n<% end %>b").should == "a\ndo shit\nb\n"
-    parsed("a\n<% if false %>do shit<% end %>b").should == "a\nb\n"
-    parsed("a<% if true %>b<% end %>c").should == "abc\n"
-    parsed("a<%= 1 + 2 %>b").should == "a3b\n"
-    parsed("a<%# comment %>b").should == "ab\n"
-    parsed("a<%% whatev %>b").should == "a<% whatev %>b\n"
-    parsed("a<%%= whatev %>b").should == "a<%= whatev %>b\n"
-    parsed("a<% if 'I' %>b<% end %>c").should == "abc\n"
-    recorded_args("a<% record_args 'I' %>").should == ['I']
-    recorded_args("a<%= record_args 'I' %>").should == ['I']
+    assert_parsed "a\n<% if true %>\ndo shit\n<% end %>b", "a\ndo shit\nb\n"
+    assert_parsed "a\n<% if false %>do shit<% end %>b",    "a\nb\n"
+    assert_parsed "a<% if true %>b<% end %>c",             "abc\n"
+    assert_parsed "a<%= 1 + 2 %>b",                        "a3b\n"
+    assert_parsed "a<%# comment %>b",                      "ab\n"
+    assert_parsed "a<%% whatev %>b",                       "a<% whatev %>b\n"
+    assert_parsed "a<%%= whatev %>b",                      "a<%= whatev %>b\n"
+    assert_parsed "a<% if 'I' %>b<% end %>c",              "abc\n"
+    expect(recorded_args "a<% record_args 'I' %>").to eq ['I']
+    expect(recorded_args "a<%= record_args 'I' %>").to eq ['I']
   end
 
   specify 'results always end with a newline' do
-    parsed("abc").should == "abc\n"
+    assert_parsed "abc", "abc\n"
   end
 
   describe 'visible methods' do
     specify 'are provided in a list to the constructor and converted to strings' do
-      described_class.new('', visible: [:a]).visible_commands.should == ['a']
+      expect(described_class.new('', visible: [:a]).visible_commands).to eq ['a']
     end
 
     specify 'default to an empty array' do
-      described_class.new('').visible_commands.should == []
+      expect(described_class.new('').visible_commands).to eq []
     end
 
     specify 'show up in the document when evaluated' do
-      parsed("a<% visible do %>b<% end %>c").should == "abc\n"
+      assert_parsed "a<% visible do %>b<% end %>c", "abc\n"
     end
 
+    def assert_visible(pre, post)
+      expect(visible_in pre).to eq post
+    end
     specify 'are returned when the block is invoked' do
-      visible_in("a<% visible do %>b<% end %>c").should == ['b']
+      assert_visible "a<% visible do %>b<% end %>c", ['b']
     end
 
     specify "support basic nesting (can't do complex nesting without editing parse trees -- not a big deal, these are things that even erubis can't do)" do
-      visible_in("a<%visible {%>b<%visible {%>c<% } %>d<% } %>e").should == ['c', 'bd']
-      visible_in("a<%visible {%>b<%if false %>c<% end %>d<% } %>e").should == ['bd']
-      visible_in("<%# visible %>").should == []
-      visible_in('<% visible do %>\'a\'\\<% end %>').should == ['\'a\'\\']
+      assert_visible "a<%visible {%>b<%visible {%>c<% } %>d<% } %>e",    ['c', 'bd']
+      assert_visible "a<%visible {%>b<%if false %>c<% end %>d<% } %>e",  ['bd']
+      assert_visible "<%# visible %>",                                   []
+      assert_visible '<% visible do %>\'a\'\\<% end %>',                 ['\'a\'\\']
     end
   end
 
   describe 'invisible methods' do
     specify 'are provided in a list to the constructor and converted to strings' do
-      described_class.new('', invisible: [:a]).invisible_commands.should == ['a']
+      expect(described_class.new('', invisible: [:a]).invisible_commands).to eq ['a']
     end
 
     specify 'default to an empty array' do
-      described_class.new('').invisible_commands.should == []
+      expect(described_class.new('').invisible_commands).to eq []
     end
 
     specify 'do not show up in the document when evaluated' do
-      parsed("a<% invisible do %>b<% end %>c").should == "ac\n"
+      assert_parsed "a<% invisible do %>b<% end %>c", "ac\n"
+    end
+
+    def assert_invisible(pre, post)
+      expect(invisible_in pre).to eq post
     end
 
     specify 'are returned when the block is invoked' do
-      invisible_in("a<% invisible do %>b<% end %>c").should == ['b']
+      assert_invisible "a<% invisible do %>b<% end %>c", ['b']
     end
 
     specify "support basic nesting (can't do complex nesting without editing parse trees -- not a big deal, these are things that even erubis can't do)" do
-      invisible_in("a<%invisible {%>b<%invisible {%>c<% } %>d<% } %>e").should == ['c', 'bd']
-      invisible_in("a<%invisible {%>b<%if false %>c<% end %>d<% } %>e").should == ['bd']
-      invisible_in("<%# invisible %>").should == []
-      invisible_in('<% invisible do %>\'a\'\\<% end %>').should == ['\'a\'\\']
+      assert_invisible "a<%invisible {%>b<%invisible {%>c<% } %>d<% } %>e", ['c', 'bd']
+      assert_invisible "a<%invisible {%>b<%if false %>c<% end %>d<% } %>e", ['bd']
+      assert_invisible "<%# invisible %>",                                  []
+      assert_invisible '<% invisible do %>\'a\'\\<% end %>',                ['\'a\'\\']
     end
   end
 
@@ -133,7 +144,7 @@ describe MountainBerryFields::Parser do
   #
   # Erubis::Eruby.new('<% a = "<% b %>"; a * 2 %>').src # => "_buf = ''; a = \"<% b ; _buf << '\"; a * 2 %>';\n_buf.to_s\n"
   xit 'ignores erb tags inside erb blocks' do
-    parse("a<% s='<% visible { %>b<% } %>' %>c").should == "ac\n"
+    parsed("a<% s='<% visible { %>b<% } %>' %>c").should == "ac\n"
     parsed("a<% s='<% invisible { %>b<% } %>' %>c").should == "ac\n"
   end
 end

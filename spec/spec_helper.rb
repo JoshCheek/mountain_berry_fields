@@ -7,6 +7,15 @@ require 'stringio'
 require 'surrogate/rspec'
 require 'mountain_berry_fields/interface'
 
+class RSpec::Expectations::ExpectationTarget
+  alias was     to
+  alias was_not to_not
+end
+
+RSpec.configure do |config|
+  config.raise_errors_for_deprecations!
+  config.disable_monkey_patching!
+end
 
 RSpec::Matchers.define :pass do
   match { |matcher| matcher.pass? }

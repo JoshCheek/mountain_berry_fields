@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe MountainBerryFields do
+RSpec.describe MountainBerryFields do
   let(:dir_class)   { mbf.dir_class }
   let(:file_class)  { mbf.file_class }
   let(:stderr)      { mbf.stderr.string }
@@ -10,11 +10,11 @@ describe MountainBerryFields do
 
   shared_examples 'a failure' do
     it 'returns false' do
-      mbf.execute.should == false
+      expect(mbf.execute).to eq false
     end
 
     it 'does not write any files' do
-      file_class.should_not have_been_told_to :write
+      expect(file_class).was_not told_to :write
     end
   end
 
@@ -27,7 +27,7 @@ describe MountainBerryFields do
 
     it "declares the error '#{nonexistence_message}'" do
       mbf.execute
-      interaction.should have_been_told_to(:declare_failure).with(nonexistence_message)
+      expect(interaction).was told_to(:declare_failure).with(nonexistence_message)
     end
   end
 
@@ -43,8 +43,8 @@ describe MountainBerryFields do
 
     it "declares the error '#{nonexistent_filename}'" do
       mbf.execute
-      file_class.should have_been_asked_for_its(:exist?).with(nonexistent_filename)
-      interaction.should have_been_told_to(:declare_failure).with(nonexistence_message)
+      expect(file_class).was asked_if(:exist?).with(nonexistent_filename)
+      expect(interaction).was told_to(:declare_failure).with(nonexistence_message)
     end
   end
 
@@ -56,7 +56,7 @@ describe MountainBerryFields do
 
     it "declares the error '#{invalid_filename_message}'" do
       mbf.execute
-      interaction.should have_been_told_to(:declare_failure).with(invalid_filename_message)
+      expect(interaction).was told_to(:declare_failure).with(invalid_filename_message)
     end
   end
 
@@ -69,7 +69,7 @@ describe MountainBerryFields do
 
     it 'writes the exception class and message as the error' do
       mbf.execute
-      interaction.should have_been_told_to(:declare_failure).with("StandardError some error message")
+      expect(interaction).was told_to(:declare_failure).with("StandardError some error message")
     end
   end
 
@@ -87,25 +87,25 @@ describe MountainBerryFields do
 
     it 'declares no errors' do
       mbf.execute
-      interaction.should_not have_been_told_to :declare_failure
+      expect(interaction).was_not told_to :declare_failure
     end
 
     it 'passes the file contents to the parser' do
       visible_commands = mbf.evaluator_class.visible_commands
       invisible_commands = mbf.evaluator_class.invisible_commands
       mbf.execute
-      file_class.should have_been_told_to(:read).with(/#{input_filename}$/)
-      parser.should have_been_initialized_with file_body, visible: visible_commands, invisible: invisible_commands
+      expect(file_class).was told_to(:read).with(/#{input_filename}$/)
+      expect(parser).was initialized_with file_body, visible: visible_commands, invisible: invisible_commands
     end
 
     it "evaluates the results of the parsing, in the input file's directory" do
       dir_class.will_chdir false
       mbf.execute
-      dir_class.should have_been_told_to(:chdir).with(input_filepath) { |block|
-        block.before { evaluator.should_not have_been_asked_if :tests_pass? }
-        block.after  { evaluator.should     have_been_asked_if :tests_pass? }
+      expect(dir_class).was told_to(:chdir).with(input_filepath) { |block|
+        block.before { expect(evaluator).was_not asked_if :tests_pass? }
+        block.after  { expect(evaluator).was     asked_if :tests_pass? }
       }
-      evaluator.should have_been_initialized_with parsed_body
+      expect(evaluator).was initialized_with parsed_body
     end
 
 
@@ -114,12 +114,12 @@ describe MountainBerryFields do
       before { evaluator.will_have_document document }
 
       it 'returns true' do
-        mbf.execute.should == true
+        expect(mbf.execute).to equal true
       end
 
       it 'writes the interpreted file to the new filename (the same name, but with mountain_berry_fields segment removed)' do
         mbf.execute
-        file_class.should have_been_told_to(:write).with(output_filename, document)
+        expect(file_class).was told_to(:write).with(output_filename, document)
       end
     end
 
@@ -131,7 +131,7 @@ describe MountainBerryFields do
         evaluator.will_have_failure_name "sir"
         evaluator.will_have_failure_message "failsalot"
         mbf.execute
-        interaction.should have_been_told_to(:declare_failure).with("FAILURE: sir\nfailsalot")
+        expect(interaction).was told_to(:declare_failure).with("FAILURE: sir\nfailsalot")
       end
     end
 
@@ -140,7 +140,7 @@ describe MountainBerryFields do
       it_behaves_like 'a failure'
       it 'writes the exception class and message as the error' do
         mbf.execute
-        interaction.should have_been_told_to(:declare_failure).with("StandardError blah")
+        expect(interaction).was told_to(:declare_failure).with("StandardError blah")
       end
     end
   end
