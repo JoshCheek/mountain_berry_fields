@@ -1,4 +1,5 @@
 #!/usr/bin/env rake
+require 'bundler/setup'
 
 desc 'Run specs'
 task :spec do
@@ -27,5 +28,9 @@ namespace :cuke do
   end
 end
 
+desc 'Generate readme'
+task :readme do
+  sh 'bin/mountain_berry_fields Readme.md.mountain_berry_fields'
+end
 
-task default: [:spec, :cuke, :rspec_must_be_100_percent]
+task default: [:rspec_must_be_100_percent, :cuke, :readme]
