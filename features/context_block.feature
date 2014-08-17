@@ -55,7 +55,7 @@ Feature: Using a context block
     Users know their names:
     ```ruby
     <% test 'Users know their names', with: :rspec, context: 'user spec' do %>
-      User.new('Josh').name.should == 'Not Josh'
+      expect(User.new('Josh').name).to eq 'Not Josh'
     <% end %>
     ```
     """
@@ -64,8 +64,11 @@ Feature: Using a context block
     """
     FAILURE: Users know their names
     User does usery things:
-      expected: "Not Josh"
-         got: "Josh" (using ==)
+      
+    expected: "Not Josh"
+         got: "Josh"
+
+    (compared using ==)
 
     backtrace:
       /spec.rb:4:in `block (2 levels) in <top (required)>'

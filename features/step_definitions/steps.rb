@@ -10,33 +10,33 @@ When 'I run "$command"' do |command|
 end
 
 Then /^it exits with a status of (\d+)$/ do |status|
-  last_cmdline.exitstatus.should eq(status.to_i), "Expected #{status}, got #{last_cmdline.exitstatus}. STDERR: #{last_cmdline.stderr}"
+  expect(last_cmdline.exitstatus).to eq(status.to_i), "Expected #{status}, got #{last_cmdline.exitstatus}. STDERR: #{last_cmdline.stderr}"
 end
 
 Then /^it exits with a status of (\d+), and a stderr of:$/ do |status, stderr|
-  last_cmdline.exitstatus.should == status.to_i
-  last_cmdline.stderr.chomp.should == interpret_curlies(stderr).chomp
+  expect(last_cmdline.exitstatus).to eq status.to_i
+  expect(last_cmdline.stderr.chomp).to eq interpret_curlies(stderr).chomp
 end
 
 Then /^it prints nothing to (stdout|stderr)$/ do |descriptor|
-  last_cmdline.send(descriptor).should == ''
+  expect(last_cmdline.send descriptor).to eq ''
 end
 
 Then 'I see the file "$filename"' do |filename|
-  in_proving_grounds { File.exist?(filename).should be_true }
+  in_proving_grounds { expect(File.exist? filename).to be_truthy }
 end
 
 Then 'I see the file "$filename":' do |filename, body|
   in_proving_grounds do
-    File.exist?(filename).should be_true, "#{filename} doesn't exist"
+    expect(File.exist? filename).to be_truthy, "#{filename} doesn't exist"
 
-    body && strip_trailing_whitespace(File.read(filename)).should ==
+    body and expect(strip_trailing_whitespace File.read filename).to eq \
             strip_trailing_whitespace(body)
   end
 end
 
 Then 'I do not see the file "$filename"' do |filename|
-  in_proving_grounds { File.exist?(filename).should be_false }
+  in_proving_grounds { expect(File.exist? filename).to be_falsy }
 end
 
 And 'I pry' do
