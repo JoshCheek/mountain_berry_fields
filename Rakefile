@@ -1,19 +1,11 @@
 #!/usr/bin/env rake
-require 'bundler/gem_tasks'
 
-task :rspec do
-  require 'rspec'
-  Dir.glob("spec/**/*_spec.rb").each { |filename| require File.expand_path filename }
-  RSpec::Core::Runner.run []
+desc 'Run specs'
+task :spec do
+  sh 'rspec'
 end
 
-require 'cucumber/rake/task'
-default_cucumber_opts = "features --format pretty --tags ~@not-implemented"
-Cucumber::Rake::Task.new(:cucumber)      { |t| t.cucumber_opts = default_cucumber_opts + " --tags ~@wip" }
-Cucumber::Rake::Task.new('cucumber:wip') { |t| t.cucumber_opts = default_cucumber_opts + " --tags @wip" }
-
-
-task rspec_must_be_100_percent: :rspec do
+task rspec_must_be_100_percent: :spec do
   percent = SimpleCov.result.covered_percent
   unless percent == 100
     SimpleCov.result.format!
@@ -22,10 +14,17 @@ task rspec_must_be_100_percent: :rspec do
 end
 
 
-require 'mountain_berry_fields/rake_task'
-desc 'Generate readme'
-MountainBerryFields::RakeTask.new(:readme, 'Readme.md.mountain_berry_fields')
+desc 'Run non-work-in-progress cukes'
+task :cuke do
+  sh 'cucumber --tag ~@wip'
+end
 
-task default: [:rspec_must_be_100_percent, :cucumber, :readme]
+namespace :cuke do
+  desc 'Run work-in-progress cukes'
+  task :wip do
+    sh 'cucumber --tag @wip'
+  end
+end
 
 
+task default: [:spec, :cuke, :rspec_must_be_100_percent]
